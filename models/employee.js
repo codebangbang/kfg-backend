@@ -1,12 +1,12 @@
 "use strict";
 
-import db from "../db";
-import { BadRequestError, NotFoundError } from "../expressError";
-import { sqlForPartialUpdate } from "../helpers/sql";
+const db = require("../db");
+const { BadRequestError, NotFoundError } = require("../expressError");
+const { sqlForPartialUpdate } = require("../helpers/sql");
 
 /** Related functions for companies. */
 
-export default class Employee {
+class Employee {
   static async create({
     first_name,
     last_name,
@@ -38,44 +38,44 @@ export default class Employee {
   }
 
   static async findAll() {
-      let query = `SELECT first_name, last_name, email, extension, ms_teams_link, department
+    let query = `SELECT first_name, last_name, email, extension, ms_teams_link, department
                    FROM companies`;
-      let whereExpressions = [];
-      let queryValues = [];
-  
-      // const { minEmployees, maxEmployees, name } = searchFilters;
-  
-      // if (minEmployees > maxEmployees) {
-      //   throw new BadRequestError("Min employees cannot be greater than max");
-      // }
-  
-      // For each possible search term, add to whereExpressions and queryValues so
-      // we can generate the right SQL
-  
-      if (first_name !== undefined) {
-        queryValues.push(first_name);
-        whereExpressions.push(`first_name >= $${queryValues.length}`);
-      }
-  
-      if (last_name !== undefined) {
-        queryValues.push(last_name);
-        whereExpressions.push(`num_employees <= $${queryValues.length}`);
-      }
-  
-      if (email) {
-        queryValues.push(`%${email}%`);
-        whereExpressions.push(`name ILIKE $${queryValues.length}`);
-      }
-  
-      if (whereExpressions.length > 0) {
-        query += " WHERE " + whereExpressions.join(" AND ");
-      }
-  
-      // Finalize query and return results
-  
-      query += " ORDER BY name";
-      const companiesRes = await db.query(query, queryValues);
-      return companiesRes.rows;
+    let whereExpressions = [];
+    let queryValues = [];
+
+    // const { minEmployees, maxEmployees, name } = searchFilters;
+
+    // if (minEmployees > maxEmployees) {
+    //   throw new BadRequestError("Min employees cannot be greater than max");
+    // }
+
+    // For each possible search term, add to whereExpressions and queryValues so
+    // we can generate the right SQL
+
+    if (first_name !== undefined) {
+      queryValues.push(first_name);
+      whereExpressions.push(`first_name >= $${queryValues.length}`);
+    }
+
+    if (last_name !== undefined) {
+      queryValues.push(last_name);
+      whereExpressions.push(`num_employees <= $${queryValues.length}`);
+    }
+
+    if (email) {
+      queryValues.push(`%${email}%`);
+      whereExpressions.push(`name ILIKE $${queryValues.length}`);
+    }
+
+    if (whereExpressions.length > 0) {
+      query += " WHERE " + whereExpressions.join(" AND ");
+    }
+
+    // Finalize query and return results
+
+    query += " ORDER BY name";
+    const companiesRes = await db.query(query, queryValues);
+    return companiesRes.rows;
   }
 
   /** Given a company handle, return data about company.
@@ -100,12 +100,12 @@ export default class Employee {
     if (!employee) throw new NotFoundError(`No employee: ${handle}`);
 
     await db.query(
-          `SELECT first_name, last_name, email, extension, ms_teams_link, department
+      `SELECT first_name, last_name, email, extension, ms_teams_link, department
                FROM employees
                WHERE company_handle = $1
                ORDER BY id`,
-          [handle]
-        );
+      [handle]
+    );
 
     return employee;
   }
@@ -164,4 +164,4 @@ export default class Employee {
   }
 }
 
-
+module.exports = Employee;

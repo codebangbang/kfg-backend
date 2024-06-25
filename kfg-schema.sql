@@ -20,7 +20,8 @@ CREATE TABLE employees (
     email VARCHAR(100) NOT NULL UNIQUE,
     extension VARCHAR(10),
     ms_teams_link VARCHAR(255),
-    department VARCHAR(100)
+    department VARCHAR(100),
+    office_location VARCHAR(100)
 );
 
 CREATE TABLE skills (

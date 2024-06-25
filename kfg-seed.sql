@@ -12,15 +12,15 @@ VALUES ('testuser',
         'ryfair@gmail.com',
         TRUE);
 
-INSERT INTO employees (first_name,last_name,email,extension,ms_teams_link,department)
-VALUES ('Ryan','Fair','ryan.fair@korhorn.com',133,NULL,'Tax'),
-        ('Summer','Hathaway','summer.hathaway@korhorn.com',111,NULL,'Systems & Operations'),
-        ('Phil','Fletcher','phil.fletcher@korhorn.com',122,NULL,'Systems & Operations'),
-        ('Jay','Ulbricht','jay.ulbricht@korhorn.com',144,NULL,'Tax'),
-        ('Holden','Price','holden.price@korhorn.com',155,NULL,'Wealth Management'),
-        ('Alysia','Boehner','alysia.boehner@korhorn.com',166,NULL,'P&C Insurance'),
-        ('Ben','Bulgrien','ben.bulgrien@korhorn.com',177,NULL,'Health Insurance'),
-        ('Rachelle','Hildebrand','rachelle.hildebrand@korhorn.com',188,NULL,'Business Services');
+INSERT INTO employees (first_name,last_name,email,extension,ms_teams_link,department, office_location)
+VALUES ('Ryan','Fair','ryan.fair@korhorn.com',133,NULL,'Tax', 'Granger'),
+        ('Summer','Hathaway','summer.hathaway@korhorn.com',111,NULL,'Systems & Operations','Edwardsburg'),
+        ('Phil','Fletcher','phil.fletcher@korhorn.com',122,NULL,'Systems & Operations','Edwardsburg'),
+        ('Jay','Ulbricht','jay.ulbricht@korhorn.com',144,NULL,'Tax', 'Granger'),
+        ('Holden','Price','holden.price@korhorn.com',155,NULL,'Wealth Management', 'Granger'),
+        ('Alysia','Boehner','alysia.boehner@korhorn.com',166,NULL,'P&C Insurance','Nappanee'),
+        ('Ben','Bulgrien','ben.bulgrien@korhorn.com',177,NULL,'Health Insurance', 'Granger'),
+        ('Rachelle','Hillebrand','rachelle.hillebrand@korhorn.com',188,NULL,'Business Services','Edwardsburg');
 
 INSERT INTO skills (skill_name,description)
 VALUES ('Tax Preparation (1040)','Individual Income Tax Preparation'),
