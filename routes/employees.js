@@ -17,9 +17,9 @@ const router = new express.Router();
 
 /** POST / { employee } =>  { employee }
   *
-  * employee should be { first_name, last_name, email, extension, ms_teams_link, department }
+  * employee should be { first_name, last_name, email, extension, ms_teams_link, department, office_location }
   *
-  * Returns { first_name, last_name, email, extension, ms_teams_link, department }
+  * Returns { first_name, last_name, email, extension, ms_teams_link, department, office_location }
   *
   * Authorization required: admin
   */

@@ -14,153 +14,148 @@ class Employee {
     extension,
     ms_teams_link,
     department,
+    office_location,
   }) {
     const duplicateCheck = await db.query(
-      `SELECT handle
+      `SELECT email
            FROM employees
-           WHERE handle = $1`,
+           WHERE email = $1`,
       [email]
     );
 
     if (duplicateCheck.rows[0])
-      throw new BadRequestError(`Duplicate company: ${handle}`);
+      throw new BadRequestError(`Duplicate employee: ${email}`);
 
     const result = await db.query(
       `INSERT INTO employees
-           first_name, last_name, email, extension, ms_teams_link, department)
-           VALUES ($1, $2, $3, $4, $5)
-           RETURNING first_name, last_name, email, extension, ms_teams_link, department`,
-      [first_name, last_name, email, extension, ms_teams_link, department]
+           (first_name, last_name, email, extension, ms_teams_link, department, office_location)
+           VALUES ($1, $2, $3, $4, $5, $6, $7)
+           RETURNING first_name AS "firstName", last_name AS "lastName", email, extension, ms_teams_link AS "teamsLink", department, office_location AS "officeLocation"`,
+      [
+        firstName,
+        lastName,
+        email,
+        extension,
+        teamsLink,
+        department,
+        officeLocation,
+      ]
     );
-    const company = result.rows[0];
+    const employee = result.rows[0];
 
-    return company;
+    return employee;
   }
 
-  static async findAll() {
-    let query = `SELECT first_name, last_name, email, extension, ms_teams_link, department
-                   FROM companies`;
-    let whereExpressions = [];
-    let queryValues = [];
+  // static async findAll(searchFilters = {}) {
+  //   let query = `SELECT first_name AS "firstName", last_name AS "lastName, email, extension, ms_teams_link AS "teamsLink", department, office_location AS "officeLocation"
+  //                FROM employees`;
+  //   let whereExpressions = [];
+  //   let queryValues = [];
 
-    // const { minEmployees, maxEmployees, name } = searchFilters;
+  //   const { first_name } = searchFilters;
 
-    // if (minEmployees > maxEmployees) {
-    //   throw new BadRequestError("Min employees cannot be greater than max");
-    // }
+  // For each possible search term, add to whereExpressions and queryValues so
+  // we can generate the right SQL
 
-    // For each possible search term, add to whereExpressions and queryValues so
-    // we can generate the right SQL
+  // if (first_name !== undefined) {
+  //   queryValues.push(first_name);
+  //   whereExpressions.push(`first_name >= $${queryValues.length}`);
+  // }
 
-    if (first_name !== undefined) {
-      queryValues.push(first_name);
-      whereExpressions.push(`first_name >= $${queryValues.length}`);
-    }
+  // if (last_name !== undefined) {
+  //   queryValues.push(last_name);
+  //   whereExpressions.push(`num_employees <= $${queryValues.length}`);
+  // }
 
-    if (last_name !== undefined) {
-      queryValues.push(last_name);
-      whereExpressions.push(`num_employees <= $${queryValues.length}`);
-    }
+  // if (email) {
+  //   queryValues.push(`%${email}%`);
+  //   whereExpressions.push(`name ILIKE $${queryValues.length}`);
+  // }
 
-    if (email) {
-      queryValues.push(`%${email}%`);
-      whereExpressions.push(`name ILIKE $${queryValues.length}`);
-    }
+  // if (whereExpressions.length > 0) {
+  //   query += " WHERE " + whereExpressions.join(" AND ");
+  // }
 
-    if (whereExpressions.length > 0) {
-      query += " WHERE " + whereExpressions.join(" AND ");
-    }
+  // Finalize query and return results
 
-    // Finalize query and return results
+  // query += " ORDER BY name";
+  // const companiesRes = await db.query(query, queryValues);
+  // return companiesRes.rows;
+  // }
 
-    query += " ORDER BY name";
-    const companiesRes = await db.query(query, queryValues);
-    return companiesRes.rows;
-  }
-
-  /** Given a company handle, return data about company.
+  /** Given a employee id, return data about employee.
    *
-   * Returns { handle, name, description, numEmployees, logoUrl, jobs }
-   *   where jobs is [{ id, title, salary, equity }, ...]
+   * Returns { first_name, last_name, email, extension, ms_teams_link, department, office_location }
    *
    * Throws NotFoundError if not found.
    **/
 
-  static async get(handle) {
+  static async get(id) {
     const employeeRes = await db.query(
-      `SELECT handle,
-                  first_name, last_name, email, extension, ms_teams_link, department
+      `SELECT id, first_name, last_name, email, extension, ms_teams_link, department, office_location
            FROM employees
-           WHERE handle = $1)`,
-      [handle]
+           WHERE id = $1`,
+      [id]
     );
 
     const employee = employeeRes.rows[0];
 
     if (!employee) throw new NotFoundError(`No employee: ${handle}`);
-
-    await db.query(
-      `SELECT first_name, last_name, email, extension, ms_teams_link, department
-               FROM employees
-               WHERE company_handle = $1
-               ORDER BY id`,
-      [handle]
-    );
-
-    return employee;
   }
 
-  /** Update company data with `data`.
+  /** Update employee data with `data`.
    *
    * This is a "partial update" --- it's fine if data doesn't contain all the
    * fields; this only changes provided ones.
    *
-   * Data can include: {name, description, numEmployees, logoUrl}
-   *
-   * Returns {handle, name, description, numEmployees, logoUrl}
-   *
    * Throws NotFoundError if not found.
    */
 
-  static async update(handle, data) {
+  static async update(id, data) {
     const { setCols, values } = sqlForPartialUpdate(data, {
-      numEmployees: "num_employees",
-      logoUrl: "logo_url",
+      firstName: "first_name",
+      lastName: "last_name",
+      email: "email",
+      teamsLink: "ms_teams_link",
+      department: "department",
+      officeLocation: "office_location",
     });
     const handleVarIdx = "$" + (values.length + 1);
 
-    const querySql = `UPDATE companies 
-                      SET ${setCols} 
-                      WHERE handle = ${handleVarIdx} 
-                      RETURNING handle, 
-                                name, 
-                                description, 
-                                num_employees AS "numEmployees", 
-                                logo_url AS "logoUrl"`;
-    const result = await db.query(querySql, [...values, handle]);
-    const company = result.rows[0];
+    // const querySql = `UPDATE employees
+    //                   SET ${setCols}
+    //                   WHERE handle = ${handleVarIdx}
+    //                   RETURNING handle,
+    //                             first_name,
+    //                             last_name,
+    //                             email,
+    //                             extension,
+    //                             ms_teams_link,
+    //                             department`;
+    // const result = await db.query(querySql, [...values, handle]);
+    // const employee = result.rows[0];
 
-    if (!company) throw new NotFoundError(`No company: ${handle}`);
+    if (!employee) throw new NotFoundError(`No employee: ${handle}`);
 
-    return company;
+    return employee;
   }
 
-  /** Delete given company from database; returns undefined.
+  /** Delete given employee from database; returns undefined.
    *
-   * Throws NotFoundError if company not found.
+   * Throws NotFoundError if employee not found.
    **/
 
-  static async remove(handle) {
+  static async remove(id) {
     const result = await db.query(
       `DELETE
-           FROM companies
-           WHERE handle = $1
-           RETURNING handle`,
-      [handle]
+           FROM employees
+           WHERE id = $1
+           RETURNING id`,
+      [id]
     );
-    const company = result.rows[0];
+    const employee = result.rows[0];
 
-    if (!company) throw new NotFoundError(`No company: ${handle}`);
+    if (!employee) throw new NotFoundError(`No employee: ${id}`);
   }
 }
 
