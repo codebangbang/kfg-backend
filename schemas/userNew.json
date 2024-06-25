@@ -6,19 +6,19 @@
     "username": {
       "type": "string",
       "minLength": 1,
-      "maxLength": 30
+      "maxLength": 50
     },
     "password": {
       "type": "string",
       "minLength": 5,
-      "maxLength": 20
+      "maxLength": 255
     },
-    "firstName": {
+    "first_name": {
       "type": "string",
       "minLength": 1,
       "maxLength": 30
     },
-    "lastName": {
+    "last_name": {
       "type": "string",
       "minLength": 1,
       "maxLength": 30
@@ -28,9 +28,6 @@
       "minLength": 6,
       "maxLength": 60,
       "format": "email"
-    },
-    "isAdmin": {
-      "type": "boolean"
     }
   },
   "additionalProperties": false,

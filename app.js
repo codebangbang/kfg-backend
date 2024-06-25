@@ -1,7 +1,5 @@
 "use strict";
 
-/** Express app for jobly. */
-
 const express = require("express");
 const cors = require("cors");
 
@@ -9,9 +7,9 @@ const { NotFoundError } = require("./expressError");
 
 const { authenticateJWT } = require("./middleware/auth");
 const authRoutes = require("./routes/auth");
-const companiesRoutes = require("./routes/companies");
+const employeesRoutes = require("./routes/employees");
 const usersRoutes = require("./routes/users");
-const jobsRoutes = require("./routes/jobs");
+const skillsRoutes = require("./routes/skills");
 
 const morgan = require("morgan");
 
@@ -23,10 +21,15 @@ app.use(morgan("tiny"));
 app.use(authenticateJWT);
 
 app.use("/auth", authRoutes);
-app.use("/companies", companiesRoutes);
+app.use("/employees", employeesRoutes);
 app.use("/users", usersRoutes);
-app.use("/jobs", jobsRoutes);
+app.use("/skills", skillsRoutes);
 
+app.get("/", (req, res) => {
+  res.send("Welcome to the KFG Backend API");
+});
+
+app.get('/favicon.ico', (req, res) => res.status(204));
 
 /** Handle 404 errors -- this matches everything */
 app.use(function (req, res, next) {

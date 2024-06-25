@@ -1,50 +1,49 @@
 "use strict";
 
-/** Routes for jobs. */
+/** Routes for skills. */
 
 const jsonschema = require("jsonschema");
 
 const express = require("express");
 const { BadRequestError } = require("../expressError");
 const { ensureAdmin } = require("../middleware/auth");
-const Job = require("../models/job");
-const jobNewSchema = require("../schemas/jobNew.json");
-const jobUpdateSchema = require("../schemas/jobUpdate.json");
-const jobSearchSchema = require("../schemas/jobSearch.json");
+const skill = require("../models/skill");
+const skillNewSchema = require("../schemas/skillNew.json");
+const skillUpdateSchema = require("../schemas/skillUpdate.json");
+const skillSearchSchema = require("../schemas/skillSearch.json");
 
 const router = express.Router({ mergeParams: true });
 
-
-/** POST / { job } => { job }
+/** POST / { skill } => { skill }
  *
- * job should be { title, salary, equity, companyHandle }
+ * skill should be { title, salary, equity, employeeHandle }
  *
- * Returns { id, title, salary, equity, companyHandle }
+ * Returns { id, title, salary, equity, employeeHandle }
  *
  * Authorization required: admin
  */
 
 router.post("/", ensureAdmin, async function (req, res, next) {
   try {
-    const validator = jsonschema.validate(req.body, jobNewSchema);
+    const validator = jsonschema.validate(req.body, skillNewSchema);
     if (!validator.valid) {
-      const errs = validator.errors.map(e => e.stack);
+      const errs = validator.errors.map((e) => e.stack);
       throw new BadRequestError(errs);
     }
 
-    const job = await Job.create(req.body);
-    return res.status(201).json({ job });
+    const skill = await skill.create(req.body);
+    return res.status(201).json({ skill });
   } catch (err) {
     return next(err);
   }
 });
 
 /** GET / =>
- *   { jobs: [ { id, title, salary, equity, companyHandle, companyName }, ...] }
+ *   { skills: [ { id, title, salary, equity, employeeHandle, employeeName }, ...] }
  *
  * Can provide search filter in query:
  * - minSalary
- * - hasEquity (true returns only jobs with equity > 0, other values ignored)
+ * - hasEquity (true returns only skills with equity > 0, other values ignored)
  * - title (will find case-insensitive, partial matches)
 
  * Authorization required: none
@@ -57,56 +56,55 @@ router.get("/", async function (req, res, next) {
   q.hasEquity = q.hasEquity === "true";
 
   try {
-    const validator = jsonschema.validate(q, jobSearchSchema);
+    const validator = jsonschema.validate(q, skillSearchSchema);
     if (!validator.valid) {
-      const errs = validator.errors.map(e => e.stack);
+      const errs = validator.errors.map((e) => e.stack);
       throw new BadRequestError(errs);
     }
 
-    const jobs = await Job.findAll(q);
-    return res.json({ jobs });
+    const skills = await skill.findAll(q);
+    return res.json({ skills });
   } catch (err) {
     return next(err);
   }
 });
 
-/** GET /[jobId] => { job }
+/** GET /[skillId] => { skill }
  *
- * Returns { id, title, salary, equity, company }
- *   where company is { handle, name, description, numEmployees, logoUrl }
+ * Returns { id, title, salary, equity, employee }
+ *   where employee is { handle, name, description, numEmployees, logoUrl }
  *
  * Authorization required: none
  */
 
 router.get("/:id", async function (req, res, next) {
   try {
-    const job = await Job.get(req.params.id);
-    return res.json({ job });
+    const skill = await skill.get(req.params.id);
+    return res.json({ skill });
   } catch (err) {
     return next(err);
   }
 });
 
-
-/** PATCH /[jobId]  { fld1, fld2, ... } => { job }
+/** PATCH /[skillId]  { fld1, fld2, ... } => { skill }
  *
  * Data can include: { title, salary, equity }
  *
- * Returns { id, title, salary, equity, companyHandle }
+ * Returns { id, title, salary, equity, employeeHandle }
  *
  * Authorization required: admin
  */
 
 router.patch("/:id", ensureAdmin, async function (req, res, next) {
   try {
-    const validator = jsonschema.validate(req.body, jobUpdateSchema);
+    const validator = jsonschema.validate(req.body, skillUpdateSchema);
     if (!validator.valid) {
-      const errs = validator.errors.map(e => e.stack);
+      const errs = validator.errors.map((e) => e.stack);
       throw new BadRequestError(errs);
     }
 
-    const job = await Job.update(req.params.id, req.body);
-    return res.json({ job });
+    const skill = await skill.update(req.params.id, req.body);
+    return res.json({ skill });
   } catch (err) {
     return next(err);
   }
@@ -119,12 +117,11 @@ router.patch("/:id", ensureAdmin, async function (req, res, next) {
 
 router.delete("/:id", ensureAdmin, async function (req, res, next) {
   try {
-    await Job.remove(req.params.id);
+    await skill.remove(req.params.id);
     return res.json({ deleted: +req.params.id });
   } catch (err) {
     return next(err);
   }
 });
-
 
 module.exports = router;
