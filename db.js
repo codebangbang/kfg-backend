@@ -18,6 +18,8 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-db.connect();
+db.connect()
+  .then(() => console.log("Connected to KFG Database"))
+  .catch((err) => console.error("Database connection error", err.stack));
 
 module.exports = db;
