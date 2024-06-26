@@ -3,16 +3,15 @@
 // require("@babel/register");
 const express = require("express");
 const cors = require("cors");
+const morgan = require("morgan");
 
 const { NotFoundError } = require("./expressError");
-
 const { authenticateJWT } = require("./middleware/auth");
+
 const authRoutes = require("./routes/auth");
 const employeesRoutes = require("./routes/employees");
 const usersRoutes = require("./routes/users");
 const skillsRoutes = require("./routes/skills");
-
-const morgan = require("morgan");
 
 const app = express();
 

@@ -212,23 +212,23 @@ class User {
    **/
 
   static async applyToskill(username, skillId) {
-    const preCheck = await db.query(
+    const skillCheck = await db.query(
       `SELECT id
            FROM skills
            WHERE id = $1`,
       [skillId]
     );
-    const skill = preCheck.rows[0];
+    const skill = skillCheck.rows[0];
 
     if (!skill) throw new NotFoundError(`No skill: ${skillId}`);
 
-    const preCheck2 = await db.query(
+    const userCheck = await db.query(
       `SELECT username
            FROM users
            WHERE username = $1`,
       [username]
     );
-    const user = preCheck2.rows[0];
+    const user = userCheck.rows[0];
 
     if (!user) throw new NotFoundError(`No username: ${username}`);
 

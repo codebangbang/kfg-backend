@@ -6,7 +6,7 @@ const jsonschema = require("jsonschema");
 const express = require("express");
 const { BadRequestError } = require("../expressError");
 const { ensureAdmin } = require("../middleware/auth");
-const skill = require("../models/skill");
+const Skill = require("../models/skill");
 
 const skillNewSchema = require("../schemas/skillNew.json");
 const skillSearchSchema = require("../schemas/skillSearch.json");
@@ -28,7 +28,7 @@ router.post("/", ensureAdmin, async function (req, res, next) {
       throw new BadRequestError(errs);
     }
 
-    const newSkill = await skill.create(req.body);
+    const newSkill = await Skill.create(req.body);
     return res.status(201).json({ skill: newSkill });
   } catch (err) {
     return next(err);
@@ -36,15 +36,17 @@ router.post("/", ensureAdmin, async function (req, res, next) {
 });
 
 router.get("/", async function (req, res, next) {
-  const q = req.query;
-  if (q.skill_name) q.skill_name = q.skill_name.toLowerCase();
   try {
+    const q = req.query;
+    if (q.skill_name) q.skill_name = q.skill_name.toLowerCase();
+    
     const validator = jsonschema.validate(q, skillSearchSchema);
     if (!validator.valid) {
       const errs = validator.errors.map((e) => e.stack);
       throw new BadRequestError(errs);
     }
-    const skillList = await skill.findAll(q);
+    
+    const skillList = await Skill.findAll(q);
     return res.json({ skills: skillList });
   } catch (err) {
     return next(err);
@@ -53,7 +55,7 @@ router.get("/", async function (req, res, next) {
 
 router.get("/:id", async function (req, res, next) {
   try {
-    const fetchedSkill = await skill.get(req.params.id);
+    const fetchedSkill = await Skill.get(req.params.id);
     return res.json({ skill: fetchedSkill });
   } catch (err) {
     return next(err);

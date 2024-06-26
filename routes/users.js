@@ -3,7 +3,6 @@
 /** Routes for users. */
 
 const jsonschema = require("jsonschema");
-
 const express = require("express");
 const { ensureCorrectUserOrAdmin, ensureAdmin } = require("../middleware/auth");
 const { BadRequestError } = require("../expressError");
@@ -62,9 +61,7 @@ router.get("/", ensureAdmin, async function (req, res, next) {
  *
  **/
 
-router.get(
-  "/:username",
-  ensureCorrectUserOrAdmin,
+router.get("/:username", ensureCorrectUserOrAdmin,
   async function (req, res, next) {
     try {
       const user = await User.get(req.params.username);
@@ -85,9 +82,7 @@ router.get(
  * Authorization required: admin or same-user-as-:username
  **/
 
-router.patch(
-  "/:username",
-  ensureCorrectUserOrAdmin,
+router.patch("/:username", ensureCorrectUserOrAdmin,
   async function (req, res, next) {
     try {
       const validator = jsonschema.validate(req.body, userUpdateSchema);
@@ -95,8 +90,8 @@ router.patch(
         const errs = validator.errors.map((e) => e.stack);
         throw new BadRequestError(errs);
       }
-      const userList = await User.update(req.params.username, req.body);
-      return res.json({ user: userList });
+      const user = await User.update(req.params.username, req.body);
+      return res.json({ user });
     } catch (err) {
       return next(err);
     }
@@ -108,9 +103,7 @@ router.patch(
  * Authorization required: admin or same-user-as-:username
  **/
 
-router.delete(
-  "/:username",
-  ensureCorrectUserOrAdmin,
+router.delete("/:username", ensureCorrectUserOrAdmin,
   async function (req, res, next) {
     try {
       await User.remove(req.params.username);
@@ -128,9 +121,7 @@ router.delete(
  * Authorization required: admin or same-user-as-:username
  * */
 
-router.post(
-  "/:username/skills/:id",
-  ensureCorrectUserOrAdmin,
+router.post("/:username/skills/:id", ensureCorrectUserOrAdmin,
   async function (req, res, next) {
     try {
       const skillId = +req.params.id;

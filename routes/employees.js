@@ -15,37 +15,34 @@ const employeeSearchSchema = require("../schemas/employeeSearch.json");
 const router = new express.Router();
 
 /** POST / { employee } =>  { employee }
-  *
-  * employee should be { first_name, last_name, email, extension, ms_teams_link, department, office_location }
-  *
-  * Returns { first_name, last_name, email, extension, ms_teams_link, department, office_location }
-  *
-  * Authorization required: admin
-  */
+ *
+ * employee should be { first_name, last_name, email, extension, ms_teams_link, department, office_location }
+ *
+ * Returns { first_name, last_name, email, extension, ms_teams_link, department, office_location }
+ *
+ * Authorization required: admin
+ */
 
 router.post("/", ensureAdmin, async function (req, res, next) {
- try { 
-  const validator = jsonschema.validate(req.body, employeeNewSchema);
-  if (!validator.valid) {
-    const errs = validator.errors.map((e) => e.stack);
-    throw new BadRequestError(errs);
-  }
+  try {
+    const validator = jsonschema.validate(req.body, employeeNewSchema);
+    if (!validator.valid) {
+      const errs = validator.errors.map((e) => e.stack);
+      throw new BadRequestError(errs);
+    }
 
-  const newEmployee = await Employee.create(req.body);
-  return res.status(201).json({ employee: newEmployee });
- }
-  catch (err) {
+    const newEmployee = await Employee.create(req.body);
+    return res.status(201).json({ employee: newEmployee });
+  } catch (err) {
     return next(err);
   }
 });
 
-
-
 // /** GET /  =>
 
 router.get("/", async function (req, res, next) {
-  const q = req.query;
   try {
+    const q = req.query;
     const validator = jsonschema.validate(q, employeeSearchSchema);
     if (!validator.valid) {
       const errs = validator.errors.map((e) => e.stack);
@@ -58,18 +55,14 @@ router.get("/", async function (req, res, next) {
   }
 });
 
-
-
 router.get("/:id", async function (req, res, next) {
   try {
     const fetchedEmployee = await Employee.get(req.params.id);
-    return res.json({ employee: fetchedEmployee});
+    return res.json({ employee: fetchedEmployee });
   } catch (err) {
     return next(err);
   }
 });
-
-
 
 router.patch("/:id", ensureAdmin, async function (req, res, next) {
   try {
@@ -78,16 +71,14 @@ router.patch("/:id", ensureAdmin, async function (req, res, next) {
       const errs = validator.errors.map((e) => e.stack);
       throw new BadRequestError(errs);
     }
-    const employeeList = await Employee.update(req.params.id, req.body);
-    return res.json({ employee: employeeList });
+    const updatedEmployee = await Employee.update(req.params.id, req.body);
+    return res.json({ employee: updatedEmployee });
   } catch (err) {
     return next(err);
   }
 });
 
-
-
-router.delete ("/:id", ensureAdmin, async function (req, res, next) {
+router.delete("/:id", ensureAdmin, async function (req, res, next) {
   try {
     await Employee.remove(req.params.id);
     return res.json({ deleted: req.params.id });
