@@ -14,12 +14,12 @@ class Skill {
    * Returns { id, skill_name, description }
    **/
 
-  static async create(data) {
+  static async create(skill_name, description) {
     const result = await db.query(
       `INSERT INTO skills (skill_name, description)
            VALUES ($1, $2)
            RETURNING id, skill_name, description"`,
-      [data.skill_name, data.description]
+      [skill_name, description]
     );
     let skill = result.rows[0];
 
@@ -34,26 +34,35 @@ class Skill {
    * Returns [{ id, skill_name, description }, ...]
    * */
 
-  static async findAll(queryParams) {
+  static async findAll(queryParams = {}) {
     let { skill_name } = queryParams;
-    let query = `SELECT * 
-                 FROM skills
-                 WHERE skill_name = $1`;
-    try {
-      const result = await db.query(query, [skill_name]);
-      return result.rows;
-    } catch (err) {
-      throw new Error("Error querying skills: ${err.message}");
+    let query = `SELECT id, skill_name, description 
+                 FROM skills`;
+    let whereExpressions = [];
+    let queryValues = [];
+
+    if (skill_name !== undefined) {
+      queryValues.push(`%${skill_name}%`);
+      whereExpressions.push(`skill_name ILIKE $${queryValues.length}`);
     }
+
+    if (whereExpressions.length > 0) {
+      query += " WHERE " + whereExpressions.join(" AND ");
+    }
+
+    query += " ORDER BY skill_name";
+    const result = await db.query(query, queryValues);
+
+    return result.rows;
   }
 
   // /** Given a skill id, return data about skill.
 
   static async get(id) {
     const skillRes = await db.query(
-      `SELECT id,
-                  skill_name AS "skillName",
-                  description,
+      `SELECT id
+                  skill_name,
+                  description
            FROM skills
            WHERE id = $1`,
       [id]
@@ -63,43 +72,26 @@ class Skill {
 
     if (!skill) throw new NotFoundError(`No skill: ${id}`);
 
-    const employeesRes = await db.query(
-      `SELECT id,      
-           FROM employees
-           WHERE id = $1`,
-      [skill.employee.id]
-    );
-
-    delete skill.employeeHandle;
-    skill.employee = employeesRes.rows[0];
-
     return skill;
   }
 
   /** Update skill data with `data`.
    *
-   * This is a "partial update" --- it's fine if data doesn't contain
-   * all the fields; this only changes provided ones.
-   *
-   * Data can include: { title, salary, equity }
-   *
-   * Returns { id, title, salary, equity, employeeHandle }
-   *
-   * Throws NotFoundError if not found.
    */
 
   static async update(id, data) {
-    const { setCols, values } = sqlForPartialUpdate(data, {});
+    const { setCols, values } = sqlForPartialUpdate(data, {
+      skill_name: "skill_name",
+      description: "description",
+    });
     const idVarIdx = "$" + (values.length + 1);
 
     const querySql = `UPDATE skills 
                       SET ${setCols} 
                       WHERE id = ${idVarIdx} 
                       RETURNING id, 
-                                title, 
-                                salary, 
-                                equity,
-                                employee_handle AS "employeeHandle"`;
+                                skill_name,
+                                description`;
     const result = await db.query(querySql, [...values, id]);
     const skill = result.rows[0];
 
