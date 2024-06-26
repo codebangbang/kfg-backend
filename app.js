@@ -1,6 +1,6 @@
 "use strict";
 
-require("@babel/register");
+// require("@babel/register");
 const express = require("express");
 const cors = require("cors");
 

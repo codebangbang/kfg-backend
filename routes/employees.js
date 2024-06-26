@@ -4,10 +4,9 @@
 
 const jsonschema = require("jsonschema");
 const express = require("express");
-
 const { BadRequestError } = require("../expressError");
 const { ensureAdmin } = require("../middleware/auth");
-const employee = require("../models/employee");
+const Employee = require("../models/employee");
 
 const employeeNewSchema = require("../schemas/employeeNew.json");
 const employeeUpdateSchema = require("../schemas/employeeUpdate.json");
@@ -32,8 +31,8 @@ router.post("/", ensureAdmin, async function (req, res, next) {
     throw new BadRequestError(errs);
   }
 
-  const employee = await employee.create(req.body);
-  return res.status(201).json({ employee });
+  const newEmployee = await Employee.create(req.body);
+  return res.status(201).json({ employee: newEmployee });
  }
   catch (err) {
     return next(err);
@@ -47,17 +46,13 @@ router.post("/", ensureAdmin, async function (req, res, next) {
 router.get("/", async function (req, res, next) {
   const q = req.query;
   try {
-    if (q.minEmployees !== undefined) q.minEmployees = +q.minEmployees;
-    if (q.maxEmployees !== undefined) q.maxEmployees = +q.maxEmployees;
-
     const validator = jsonschema.validate(q, employeeSearchSchema);
     if (!validator.valid) {
       const errs = validator.errors.map((e) => e.stack);
       throw new BadRequestError(errs);
     }
-
-    const employees = await employee.findAll(q);
-    return res.json({ employees });
+    const employeesList = await Employee.findAll(q);
+    return res.json({ employees: employeesList });
   } catch (err) {
     return next(err);
   }
@@ -65,10 +60,10 @@ router.get("/", async function (req, res, next) {
 
 
 
-router.get("/:handle", async function (req, res, next) {
+router.get("/:id", async function (req, res, next) {
   try {
-    const employee = await employee.get(req.params.handle);
-    return res.json({ employee });
+    const fetchedEmployee = await Employee.get(req.params.id);
+    return res.json({ employee: fetchedEmployee});
   } catch (err) {
     return next(err);
   }
@@ -76,16 +71,15 @@ router.get("/:handle", async function (req, res, next) {
 
 
 
-router.patch("/:handle", ensureAdmin, async function (req, res, next) {
+router.patch("/:id", ensureAdmin, async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, employeeUpdateSchema);
     if (!validator.valid) {
       const errs = validator.errors.map((e) => e.stack);
       throw new BadRequestError(errs);
     }
-
-    const employee = await employee.update(req.params.handle, req.body);
-    return res.json({ employee });
+    const employeeList = await Employee.update(req.params.id, req.body);
+    return res.json({ employee: employeeList });
   } catch (err) {
     return next(err);
   }
@@ -93,10 +87,10 @@ router.patch("/:handle", ensureAdmin, async function (req, res, next) {
 
 
 
-router.delete ("/:handle", ensureAdmin, async function (req, res, next) {
+router.delete ("/:id", ensureAdmin, async function (req, res, next) {
   try {
-    await employee.remove(req.params.handle);
-    return res.json({ deleted: req.params.handle });
+    await Employee.remove(req.params.id);
+    return res.json({ deleted: req.params.id });
   } catch (err) {
     return next(err);
   }

@@ -2,12 +2,14 @@
 
 /** Routes for skills. */
 
-import jsonschema from "jsonschema";
-import express from "express";
-import { BadRequestError } from "../expressError";
-import { ensureAdmin } from "../middleware/auth";
-import skillNewSchema from "../schemas/skillNew.json";
-import skillSearchSchema from "../schemas/skillSearch.json";
+const jsonschema = require("jsonschema");
+const express = require("express");
+const { BadRequestError } = require("../expressError");
+const { ensureAdmin } = require("../middleware/auth");
+const skill = require("../models/skill");
+
+const skillNewSchema = require("../schemas/skillNew.json");
+const skillSearchSchema = require("../schemas/skillSearch.json");
 
 const router = express.Router({ mergeParams: true });
 
@@ -26,8 +28,8 @@ router.post("/", ensureAdmin, async function (req, res, next) {
       throw new BadRequestError(errs);
     }
 
-    const skill = await skill.create(req.body);
-    return res.status(201).json({ skill });
+    const newSkill = await skill.create(req.body);
+    return res.status(201).json({ skill: newSkill });
   } catch (err) {
     return next(err);
   }
@@ -42,8 +44,8 @@ router.get("/", async function (req, res, next) {
       const errs = validator.errors.map((e) => e.stack);
       throw new BadRequestError(errs);
     }
-    const skills = await skills.findAll(q);
-    return res.json({ skills });
+    const skillList = await skill.findAll(q);
+    return res.json({ skills: skillList });
   } catch (err) {
     return next(err);
   }
@@ -51,11 +53,11 @@ router.get("/", async function (req, res, next) {
 
 router.get("/:id", async function (req, res, next) {
   try {
-    const skill = await skill.get(req.params.id);
-    return res.json({ skill });
+    const fetchedSkill = await skill.get(req.params.id);
+    return res.json({ skill: fetchedSkill });
   } catch (err) {
     return next(err);
   }
 });
 
-export default router;
+module.exports = router;

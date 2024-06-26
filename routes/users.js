@@ -60,10 +60,6 @@ router.get("/", ensureAdmin, async function (req, res, next) {
 
 /** GET /[username] => { user }
  *
- * Returns { username, firstName, lastName, isAdmin, skills }
- *   where skills is { id, title, employeeHandle, employeeName, state }
- *
- * Authorization required: admin or same user-as-:username
  **/
 
 router.get(
@@ -99,9 +95,8 @@ router.patch(
         const errs = validator.errors.map((e) => e.stack);
         throw new BadRequestError(errs);
       }
-
-      const user = await User.update(req.params.username, req.body);
-      return res.json({ user });
+      const userList = await User.update(req.params.username, req.body);
+      return res.json({ user: userList });
     } catch (err) {
       return next(err);
     }

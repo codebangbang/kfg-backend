@@ -15,7 +15,7 @@ const { UnauthorizedError } = require("../expressError");
  * It's not an error if no token was provided or if the token is not valid.
  */
 
-function authenticateJWT(req, res, next) {
+const authenticateJWT = (req, res, next) => {
   try {
     const authHeader = req.headers && req.headers.authorization;
     if (authHeader) {

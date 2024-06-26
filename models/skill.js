@@ -6,7 +6,7 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 
 /** Related functions for employees. */
 
-class skill {
+class Skill {
   /** Create a skill (from data), update db, return new skill data.
    *
    * data should be { skill_name, description }
@@ -34,22 +34,20 @@ class skill {
    * Returns [{ id, skill_name, description }, ...]
    * */
 
-  static async findAll({ skill_name, description } = {}) {
-    let query = `SELECT s.skill_name,
-                        s.description,  
-                 FROM skills s `;
-    let whereExpressions = [];
-    let queryValues = [];
-
-    // Finalize query and return results
-
-    query += " ORDER BY skill_name";
-    const skillsRes = await db.query(query, queryValues);
-    return skillsRes.rows;
+  static async findAll(queryParams) {
+    let { skill_name } = queryParams;
+    let query = `SELECT * 
+                 FROM skills
+                 WHERE skill_name = $1`;
+    try {
+      const result = await db.query(query, [skill_name]);
+      return result.rows;
+    } catch (err) {
+      throw new Error("Error querying skills: ${err.message}");
+    }
   }
 
   // /** Given a skill id, return data about skill.
-
 
   static async get(id) {
     const skillRes = await db.query(
@@ -66,11 +64,10 @@ class skill {
     if (!skill) throw new NotFoundError(`No skill: ${id}`);
 
     const employeesRes = await db.query(
-      `SELECT 
-      
+      `SELECT id,      
            FROM employees
-           WHERE handle = $1`,
-      [skill.employeeHandle]
+           WHERE id = $1`,
+      [skill.employee.id]
     );
 
     delete skill.employeeHandle;
@@ -130,4 +127,4 @@ class skill {
   }
 }
 
-module.exports = skill;
+module.exports = Skill;

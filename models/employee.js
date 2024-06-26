@@ -30,65 +30,21 @@ class Employee {
       `INSERT INTO employees
            (first_name, last_name, email, extension, ms_teams_link, department, office_location)
            VALUES ($1, $2, $3, $4, $5, $6, $7)
-           RETURNING first_name AS "firstName", last_name AS "lastName", email, extension, ms_teams_link AS "teamsLink", department, office_location AS "officeLocation"`,
+           RETURNING id, first_name, last_name, email, extension, ms_teams_link, department, office_location`,
       [
-        firstName,
-        lastName,
+        first_name,
+        last_name,
         email,
         extension,
-        teamsLink,
+        ms_teams_link,
         department,
-        officeLocation,
+        office_location,
       ]
     );
     const employee = result.rows[0];
 
     return employee;
   }
-
-  // static async findAll(searchFilters = {}) {
-  //   let query = `SELECT first_name AS "firstName", last_name AS "lastName, email, extension, ms_teams_link AS "teamsLink", department, office_location AS "officeLocation"
-  //                FROM employees`;
-  //   let whereExpressions = [];
-  //   let queryValues = [];
-
-  //   const { first_name } = searchFilters;
-
-  // For each possible search term, add to whereExpressions and queryValues so
-  // we can generate the right SQL
-
-  // if (first_name !== undefined) {
-  //   queryValues.push(first_name);
-  //   whereExpressions.push(`first_name >= $${queryValues.length}`);
-  // }
-
-  // if (last_name !== undefined) {
-  //   queryValues.push(last_name);
-  //   whereExpressions.push(`num_employees <= $${queryValues.length}`);
-  // }
-
-  // if (email) {
-  //   queryValues.push(`%${email}%`);
-  //   whereExpressions.push(`name ILIKE $${queryValues.length}`);
-  // }
-
-  // if (whereExpressions.length > 0) {
-  //   query += " WHERE " + whereExpressions.join(" AND ");
-  // }
-
-  // Finalize query and return results
-
-  // query += " ORDER BY name";
-  // const companiesRes = await db.query(query, queryValues);
-  // return companiesRes.rows;
-  // }
-
-  /** Given a employee id, return data about employee.
-   *
-   * Returns { first_name, last_name, email, extension, ms_teams_link, department, office_location }
-   *
-   * Throws NotFoundError if not found.
-   **/
 
   static async get(id) {
     const employeeRes = await db.query(
@@ -100,7 +56,10 @@ class Employee {
 
     const employee = employeeRes.rows[0];
 
-    if (!employee) throw new NotFoundError(`No employee: ${handle}`);
+    if (!employee) {
+      throw new NotFoundError(`No employee found with id: ${id}`);
+    }
+    return employee;
   }
 
   /** Update employee data with `data`.
@@ -120,23 +79,25 @@ class Employee {
       department: "department",
       officeLocation: "office_location",
     });
-    const handleVarIdx = "$" + (values.length + 1);
 
-    // const querySql = `UPDATE employees
-    //                   SET ${setCols}
-    //                   WHERE handle = ${handleVarIdx}
-    //                   RETURNING handle,
-    //                             first_name,
-    //                             last_name,
-    //                             email,
-    //                             extension,
-    //                             ms_teams_link,
-    //                             department`;
-    // const result = await db.query(querySql, [...values, handle]);
-    // const employee = result.rows[0];
+    const querySql = `UPDATE employees
+                      SET ${setCols}
+                      WHERE id = $${values.length + 1}
+                      RETURNING id,
+                                first_name,
+                                last_name,
+                                email,
+                                extension,
+                                ms_teams_link,
+                                department,
+                                office_location`;
 
-    if (!employee) throw new NotFoundError(`No employee: ${handle}`);
+    const result = await db.query(querySql, [...values, id]);
+    const employee = result.rows[0];
 
+    if (!employee) {
+      throw new NotFoundError(`No employee found with id: ${id}`);
+    }
     return employee;
   }
 
@@ -155,7 +116,9 @@ class Employee {
     );
     const employee = result.rows[0];
 
-    if (!employee) throw new NotFoundError(`No employee: ${id}`);
+    if (!employee) {
+      throw new NotFoundError(`No employee with id: ${id}`);
+    }
   }
 }
 

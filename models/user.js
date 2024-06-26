@@ -115,11 +115,6 @@ class User {
   }
 
   /** Given a username, return data about user.
-   *
-   * Returns { username, first_name, last_name, is_admin, skills }
-   *   where skills is { id, title, employee_handle, employee_name, state }
-   *
-   * Throws NotFoundError if user not found.
    **/
 
   static async get(username) {
