@@ -30,7 +30,7 @@ class Employee {
       `INSERT INTO employees
            (first_name, last_name, email, extension, ms_teams_link, department, office_location)
            VALUES ($1, $2, $3, $4, $5, $6, $7)
-           RETURNING id, first_name, last_name, email, extension, ms_teams_link, department, office_location`,
+           RETURNING employee_id, first_name, last_name, email, extension, ms_teams_link, department, office_location`,
       [
         first_name,
         last_name,
@@ -46,18 +46,18 @@ class Employee {
     return employee;
   }
 
-  static async get(id) {
+  static async get(employee_id) {
     const employeeRes = await db.query(
-      `SELECT id, first_name, last_name, email, extension, ms_teams_link, department, office_location
+      `SELECT employee_id, first_name, last_name, email, extension, ms_teams_link, department, office_location
            FROM employees
-           WHERE id = $1`,
-      [id]
+           WHERE employee_id = $1`,
+      [employee_id]
     );
 
     const employee = employeeRes.rows[0];
 
     if (!employee) {
-      throw new NotFoundError(`No employee found with id: ${id}`);
+      throw new NotFoundError(`No employee found with id: ${employee_id}`);
     }
     return employee;
   }
@@ -70,7 +70,7 @@ class Employee {
    * Throws NotFoundError if not found.
    */
 
-  static async update(id, data) {
+  static async update(employee_id, data) {
     const { setCols, values } = sqlForPartialUpdate(data, {
       firstName: "first_name",
       lastName: "last_name",
@@ -82,8 +82,8 @@ class Employee {
 
     const querySql = `UPDATE employees
                       SET ${setCols}
-                      WHERE id = $${values.length + 1}
-                      RETURNING id,
+                      WHERE employee_id = $${values.length + 1}
+                      RETURNING employee_id,
                                 first_name,
                                 last_name,
                                 email,
@@ -92,11 +92,11 @@ class Employee {
                                 department,
                                 office_location`;
 
-    const result = await db.query(querySql, [...values, id]);
+    const result = await db.query(querySql, [...values, employee_id]);
     const employee = result.rows[0];
 
     if (!employee) {
-      throw new NotFoundError(`No employee found with id: ${id}`);
+      throw new NotFoundError(`No employee found with id: ${employee_id}`);
     }
     return employee;
   }
@@ -106,19 +106,29 @@ class Employee {
    * Throws NotFoundError if employee not found.
    **/
 
-  static async remove(id) {
+  static async remove(employee_id) {
     const result = await db.query(
       `DELETE
            FROM employees
-           WHERE id = $1
-           RETURNING id`,
-      [id]
+           WHERE employee_id = $1
+           RETURNING employee_id`,
+      [employee_id]
     );
     const employee = result.rows[0];
 
     if (!employee) {
-      throw new NotFoundError(`No employee with id: ${id}`);
+      throw new NotFoundError(`No employee with id: ${employee_id}`);
     }
+  }
+
+  /** Find all employees. */
+  static async findAll() {
+    const result = await db.query(
+      `SELECT employee_id, first_name, last_name, email, extension, ms_teams_link, department, office_location
+           FROM employees
+           ORDER BY employee_id`
+    );
+    return result.rows;
   }
 }
 
