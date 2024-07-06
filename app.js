@@ -29,7 +29,6 @@ app.get("/", (req, res) => {
   res.send("Welcome to the KFG Backend API");
 });
 
-app.get("/favicon.ico", (req, res) => res.status(204));
 
 /** Handle 404 errors -- this matches everything */
 app.use(function (req, res, next) {

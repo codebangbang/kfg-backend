@@ -18,7 +18,7 @@ class Skill {
     const result = await db.query(
       `INSERT INTO skills (skill_name, description)
            VALUES ($1, $2)
-           RETURNING id, skill_name, description"`,
+           RETURNING skill_id, skill_name, description"`,
       [skill_name, description]
     );
     let skill = result.rows[0];
@@ -36,7 +36,7 @@ class Skill {
 
   static async findAll(queryParams = {}) {
     let { skill_name } = queryParams;
-    let query = `SELECT id, skill_name, description 
+    let query = `SELECT skill_id, skill_name, description 
                  FROM skills`;
     let whereExpressions = [];
     let queryValues = [];
@@ -58,19 +58,19 @@ class Skill {
 
   // /** Given a skill id, return data about skill.
 
-  static async get(id) {
+  static async get(skill_id) {
     const skillRes = await db.query(
-      `SELECT id
+      `SELECT skill_id
                   skill_name,
                   description
            FROM skills
-           WHERE id = $1`,
-      [id]
+           WHERE skill_id = $1`,
+      [skill_id]
     );
 
     const skill = skillRes.rows[0];
 
-    if (!skill) throw new NotFoundError(`No skill: ${id}`);
+    if (!skill) throw new NotFoundError(`No skill: ${skill_id}`);
 
     return skill;
   }
@@ -79,7 +79,7 @@ class Skill {
    *
    */
 
-  static async update(id, data) {
+  static async update(skill_id, data) {
     const { setCols, values } = sqlForPartialUpdate(data, {
       skill_name: "skill_name",
       description: "description",
@@ -88,14 +88,14 @@ class Skill {
 
     const querySql = `UPDATE skills 
                       SET ${setCols} 
-                      WHERE id = ${idVarIdx} 
-                      RETURNING id, 
+                      WHERE skill_id = ${idVarIdx} 
+                      RETURNING skill_id, 
                                 skill_name,
                                 description`;
-    const result = await db.query(querySql, [...values, id]);
+    const result = await db.query(querySql, [...values, skill_id]);
     const skill = result.rows[0];
 
-    if (!skill) throw new NotFoundError(`No skill: ${id}`);
+    if (!skill) throw new NotFoundError(`No skill: ${skill_id}`);
 
     return skill;
   }
@@ -105,17 +105,17 @@ class Skill {
    * Throws NotFoundError if employee not found.
    **/
 
-  static async remove(id) {
+  static async remove(skill_id) {
     const result = await db.query(
       `DELETE
            FROM skills
-           WHERE id = $1
-           RETURNING id`,
-      [id]
+           WHERE skill_id = $1
+           RETURNING skill_id`,
+      [skill_id]
     );
     const skill = result.rows[0];
 
-    if (!skill) throw new NotFoundError(`No skill: ${id}`);
+    if (!skill) throw new NotFoundError(`No skill: ${skill_id}`);
   }
 }
 

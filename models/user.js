@@ -59,8 +59,8 @@ class User {
   static async register({
     username,
     password,
-    firstName,
-    lastName,
+    first_name,
+    last_name,
     email,
     isAdmin,
   }) {
@@ -87,7 +87,7 @@ class User {
             is_admin)
            VALUES ($1, $2, $3, $4, $5, $6)
            RETURNING username, first_name AS "firstName", last_name AS "lastName", email, is_admin AS "isAdmin"`,
-      [username, hashedPassword, firstName, lastName, email, isAdmin]
+      [username, hashedPassword, first_name, last_name, email, isAdmin]
     );
 
     const user = result.rows[0];
