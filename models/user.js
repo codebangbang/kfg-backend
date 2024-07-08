@@ -40,7 +40,7 @@ class User {
     if (user) {
       // compare hashed password to a new hash from password
       const isValid = await bcrypt.compare(password, user.password);
-      if (isValid === true) {
+      if (isValid) {
         delete user.password;
         return user;
       }
@@ -132,16 +132,6 @@ class User {
     const user = userRes.rows[0];
 
     if (!user) throw new NotFoundError(`No user: ${username}`);
-
-    const userApplicationsRes = await db.query(
-      `SELECT a.skill_id
-           FROM applications AS a
-           WHERE a.username = $1`,
-      [username]
-    );
-
-    user.applications = userApplicationsRes.rows.map((a) => a.skill_id);
-    return user;
   }
 
   /** Update user data with `data`.
@@ -213,9 +203,9 @@ class User {
 
   static async applyToskill(username, skillId) {
     const skillCheck = await db.query(
-      `SELECT id
+      `SELECT skill_id
            FROM skills
-           WHERE id = $1`,
+           WHERE skill_id = $1`,
       [skillId]
     );
     const skill = skillCheck.rows[0];
@@ -233,9 +223,9 @@ class User {
     if (!user) throw new NotFoundError(`No username: ${username}`);
 
     await db.query(
-      `INSERT INTO applications (skill_id, username)
+      `INSERT INTO user_skills (username, skill_id)
            VALUES ($1, $2)`,
-      [skillId, username]
+      [username, skillId]
     );
   }
 }
