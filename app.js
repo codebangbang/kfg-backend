@@ -1,6 +1,5 @@
 "use strict";
 
-// require("@babel/register");
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
@@ -15,20 +14,25 @@ const skillsRoutes = require("./routes/skills");
 
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+  origin: "http://localhost:5173",
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(morgan("tiny"));
+
+app.get("/", (req, res) => {
+  res.send("Welcome to the KFG Backend API");
+});
+
 app.use(authenticateJWT);
 
 app.use("/auth", authRoutes);
 app.use("/employees", employeesRoutes);
 app.use("/users", usersRoutes);
 app.use("/skills", skillsRoutes);
-
-app.get("/", (req, res) => {
-  res.send("Welcome to the KFG Backend API");
-});
-
 
 /** Handle 404 errors -- this matches everything */
 app.use(function (req, res, next) {

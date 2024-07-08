@@ -12,7 +12,7 @@ const employeeNewSchema = require("../schemas/employeeNew.json");
 const employeeUpdateSchema = require("../schemas/employeeUpdate.json");
 const employeeSearchSchema = require("../schemas/employeeSearch.json");
 
-const router = new express.Router();
+const router = express.Router();
 
 /** POST / { employee } =>  { employee }
  *
