@@ -26,8 +26,8 @@ class User {
     const result = await db.query(
       `SELECT username,
                   password,
-                  first_name AS "firstName",
-                  last_name AS "lastName",
+                  firstName,
+                  lastName,
                   email,
                   is_admin AS "isAdmin"
            FROM users
@@ -59,8 +59,8 @@ class User {
   static async register({
     username,
     password,
-    first_name,
-    last_name,
+    firstName,
+    lastName,
     email,
     isAdmin,
   }) {
@@ -81,13 +81,13 @@ class User {
       `INSERT INTO users
            (username,
             password,
-            first_name,
-            last_name,
+            firstName,
+            lastName,
             email,
             is_admin)
            VALUES ($1, $2, $3, $4, $5, $6)
-           RETURNING username, first_name AS "firstName", last_name AS "lastName", email, is_admin AS "isAdmin"`,
-      [username, hashedPassword, first_name, last_name, email, isAdmin]
+           RETURNING username, firstName, lastName, email, is_admin AS "isAdmin"`,
+      [username, hashedPassword, firstName, lastName, email, isAdmin]
     );
 
     const user = result.rows[0];
@@ -103,8 +103,8 @@ class User {
   static async findAll() {
     const result = await db.query(
       `SELECT username,
-                  first_name AS "firstName",
-                  last_name AS "lastName",
+                  firstName,
+                  lastName,
                   email,
                   is_admin AS "isAdmin"
            FROM users
@@ -120,8 +120,8 @@ class User {
   static async get(username) {
     const userRes = await db.query(
       `SELECT username,
-                  first_name AS "firstName",
-                  last_name AS "lastName",
+                  firstName,
+                  lastName,
                   email,
                   is_admin AS "isAdmin"
            FROM users
@@ -132,6 +132,8 @@ class User {
     const user = userRes.rows[0];
 
     if (!user) throw new NotFoundError(`No user: ${username}`);
+
+    return user;
   }
 
   /** Update user data with `data`.
@@ -157,8 +159,8 @@ class User {
     }
 
     const { setCols, values } = sqlForPartialUpdate(data, {
-      firstName: "first_name",
-      lastName: "last_name",
+      firstName: "firstName",
+      lastName: "lastName",
       isAdmin: "is_admin",
     });
     const usernameVarIdx = "$" + (values.length + 1);
@@ -167,8 +169,8 @@ class User {
                       SET ${setCols} 
                       WHERE username = ${usernameVarIdx} 
                       RETURNING username,
-                                first_name AS "firstName",
-                                last_name AS "lastName",
+                                firstName AS "firstName",
+                                lastName AS "lastName",
                                 email,
                                 is_admin AS "isAdmin"`;
     const result = await db.query(querySql, [...values, username]);

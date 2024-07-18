@@ -1,4 +1,4 @@
-INSERT INTO users (username, password, first_name, last_name, email, is_admin)
+INSERT INTO users (username, "password", firstName, lastName, email, is_admin)
 VALUES ('testuser',
         '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q',
         'Test',
@@ -12,7 +12,7 @@ VALUES ('testuser',
         'ryfair@gmail.com',
         TRUE);
 
-INSERT INTO employees (first_name,last_name,email,extension,ms_teams_link,department, office_location)
+INSERT INTO employees (firstName,lastName,email,extension,ms_teams_link,department, office_location)
 VALUES ('Ryan','Fair','ryan.fair@korhorn.com',133,NULL,'Tax', 'Granger'),
         ('Summer','Hathaway','summer.hathaway@korhorn.com',111,NULL,'Systems & Operations','Edwardsburg'),
         ('Phil','Fletcher','phil.fletcher@korhorn.com',122,NULL,'Systems & Operations','Edwardsburg'),
@@ -22,7 +22,7 @@ VALUES ('Ryan','Fair','ryan.fair@korhorn.com',133,NULL,'Tax', 'Granger'),
         ('Ben','Bulgrien','ben.bulgrien@korhorn.com',177,NULL,'Health Insurance', 'Granger'),
         ('Rachelle','Hillebrand','rachelle.hillebrand@korhorn.com',188,NULL,'Business Services','Edwardsburg');
 
-INSERT INTO skills (skill_name,description)
+INSERT INTO skills (skill_name,"description")
 VALUES ('Tax Preparation (1040)','Individual Income Tax Preparation'),
         ('Tax Preparation (1041)','Trust and Estate Income Tax Preparation'),
         ('Tax Preparation (1065)','Partnership Income Tax Preparation'),

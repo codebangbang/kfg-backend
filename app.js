@@ -6,7 +6,6 @@ const morgan = require("morgan");
 
 const { NotFoundError } = require("./expressError");
 const { authenticateJWT } = require("./middleware/auth");
-
 const authRoutes = require("./routes/auth");
 const employeesRoutes = require("./routes/employees");
 const usersRoutes = require("./routes/users");
@@ -22,11 +21,6 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(morgan("tiny"));
-
-app.get("/", (req, res) => {
-  res.send("Welcome to the KFG Backend API");
-});
-
 app.use(authenticateJWT);
 
 app.use("/auth", authRoutes);
@@ -34,8 +28,18 @@ app.use("/employees", employeesRoutes);
 app.use("/users", usersRoutes);
 app.use("/skills", skillsRoutes);
 
+app.get("/", (req, res) => {
+  res.send("Welcome to the KFG Backend API");
+});
+
+app.get('/favicon.ico', (req, res) => res.status(204).end());
+
 /** Handle 404 errors -- this matches everything */
 app.use(function (req, res, next) {
+  console.log(req.url);
+  console.log(req.method);
+  console.log(req.body);
+  
   return next(new NotFoundError());
 });
 
