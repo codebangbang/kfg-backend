@@ -8,8 +8,8 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 
 class Employee {
   static async create({
-    first_name,
-    last_name,
+    firstName,
+    lastName,
     email,
     extension,
     ms_teams_link,
@@ -28,12 +28,12 @@ class Employee {
 
     const result = await db.query(
       `INSERT INTO employees
-           (first_name, last_name, email, extension, ms_teams_link, department, office_location)
+           (firstName, lastName, email, extension, ms_teams_link, department, office_location)
            VALUES ($1, $2, $3, $4, $5, $6, $7)
-           RETURNING employee_id, first_name, last_name, email, extension, ms_teams_link, department, office_location`,
+           RETURNING employee_id, firstName, lastName, email, extension, ms_teams_link, department, office_location`,
       [
-        first_name,
-        last_name,
+        firstName,
+        lastName,
         email,
         extension,
         ms_teams_link,
@@ -48,7 +48,7 @@ class Employee {
 
   static async get(employee_id) {
     const employeeRes = await db.query(
-      `SELECT employee_id, first_name, last_name, email, extension, ms_teams_link, department, office_location
+      `SELECT employee_id, firstName, lastName, email, extension, ms_teams_link, department, office_location
            FROM employees
            WHERE employee_id = $1`,
       [employee_id]
@@ -72,8 +72,8 @@ class Employee {
 
   static async update(employee_id, data) {
     const { setCols, values } = sqlForPartialUpdate(data, {
-      firstName: "first_name",
-      lastName: "last_name",
+      firstName: "firstName",
+      lastName: "lastName",
       email: "email",
       teamsLink: "ms_teams_link",
       department: "department",
@@ -84,8 +84,8 @@ class Employee {
                       SET ${setCols}
                       WHERE employee_id = $${values.length + 1}
                       RETURNING employee_id,
-                                first_name,
-                                last_name,
+                                firstName,
+                                lastName,
                                 email,
                                 extension,
                                 ms_teams_link,
@@ -124,7 +124,7 @@ class Employee {
   /** Find all employees. */
   static async findAll() {
     const result = await db.query(
-      `SELECT employee_id, first_name, last_name, email, extension, ms_teams_link, department, office_location
+      `SELECT employee_id, firstName, lastName, email, extension, ms_teams_link, department, office_location
            FROM employees
            ORDER BY employee_id`
     );

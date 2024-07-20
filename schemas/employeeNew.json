@@ -3,12 +3,12 @@
   "$id": "http://our.employee.com/employeeNew.schema.json",
   "type": "object",
   "properties": {
-    "first_name": {
+    "firstName": {
       "type": "string",
       "minLength": 1,
       "maxLength": 50
     },
-    "last_name": {
+    "lastName": {
       "type": "string",
       "minLength": 1,
       "maxLength": 50
@@ -34,8 +34,8 @@
   },
   "additionalProperties": false,
   "required": [
-    "first_name",
-    "last_name",
+    "firstName",
+    "lastName",
     "email"
   ]
 }
