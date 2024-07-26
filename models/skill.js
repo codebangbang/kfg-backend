@@ -7,35 +7,19 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 /** Related functions for employees. */
 
 class Skill {
-  /** Create a skill (from data), update db, return new skill data.
-   *
-   * data should be { skill_name, description }
-   *
-   * Returns { id, skill_name, description }
-   **/
-
-  static async create(skill_name, description) {
+  static async create(data) {
     const result = await db.query(
       `INSERT INTO skills (skill_name, description)
            VALUES ($1, $2)
            RETURNING skill_id, skill_name, description"`,
-      [skill_name, description]
+      [data.skill_name, data.description]
     );
     let skill = result.rows[0];
 
     return skill;
   }
 
-  /** Find all skills (optional filter on searchFilters).
-   *
-   * searchFilters (all optional):
-   * - skill_name (will find case-insensitive, partial matches)
-   *
-   * Returns [{ id, skill_name, description }, ...]
-   * */
-
-  static async findAll(queryParams = {}) {
-    let { skill_name } = queryParams;
+  static async findAll({ skill_name }) {
     let query = `SELECT skill_id, skill_name, description 
                  FROM skills`;
     let whereExpressions = [];
@@ -50,10 +34,11 @@ class Skill {
       query += " WHERE " + whereExpressions.join(" AND ");
     }
 
-    query += " ORDER BY skill_name";
-    const result = await db.query(query, queryValues);
+    // Finalize query and return results
 
-    return result.rows;
+    query += " ORDER BY skill_name";
+    const skillRes = await db.query(query, queryValues);
+    return skillRes.rows;
   }
 
   // /** Given a skill id, return data about skill.
@@ -64,8 +49,7 @@ class Skill {
                   skill_name,
                   description
            FROM skills
-           WHERE skill_id = $1`,
-      [skill_id]
+           WHERE skill_id = $1`, [skill_id]
     );
 
     const skill = skillRes.rows[0];
@@ -80,10 +64,9 @@ class Skill {
    */
 
   static async update(skill_id, data) {
-    const { setCols, values } = sqlForPartialUpdate(data, {
-      skill_name: "skill_name",
-      description: "description",
-    });
+    const { setCols, values } = sqlForPartialUpdate(data, 
+      {});
+    
     const idVarIdx = "$" + (values.length + 1);
 
     const querySql = `UPDATE skills 

@@ -169,8 +169,8 @@ class User {
                       SET ${setCols} 
                       WHERE username = ${usernameVarIdx} 
                       RETURNING username,
-                                firstName AS "firstName",
-                                lastName AS "lastName",
+                                firstName,
+                                lastName,
                                 email,
                                 is_admin AS "isAdmin"`;
     const result = await db.query(querySql, [...values, username]);

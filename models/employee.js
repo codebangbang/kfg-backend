@@ -7,30 +7,13 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 /** Related functions for companies. */
 
 class Employee {
-  static async create({
-    firstName,
-    lastName,
-    email,
-    extension,
-    ms_teams_link,
-    department,
-    office_location,
-  }) {
-    const duplicateCheck = await db.query(
-      `SELECT email
-           FROM employees
-           WHERE email = $1`,
-      [email]
-    );
-
-    if (duplicateCheck.rows[0])
-      throw new BadRequestError(`Duplicate employee: ${email}`);
+  static async create(data) {
 
     const result = await db.query(
       `INSERT INTO employees
            (firstName, lastName, email, extension, ms_teams_link, department, office_location)
-           VALUES ($1, $2, $3, $4, $5, $6, $7)
-           RETURNING employee_id, firstName, lastName, email, extension, ms_teams_link, department, office_location`,
+              VALUES ($1, $2, $3, $4, $5, $6, $7)
+              RETURNING employee_id, firstName, lastName, email, extension, ms_teams_link, department, office_location`,
       [
         firstName,
         lastName,
@@ -46,15 +29,57 @@ class Employee {
     return employee;
   }
 
+  static async findAll({ firstName, lastName, email, department }) {
+    let query = `SELECT employee_id,
+                        firstName,
+                        lastName,
+                        email,
+                        extension,
+                        ms_teams_link,
+                        department,
+                        office_location
+                 FROM employees`;
+    let whereExpressions = [];
+    let queryValues = [];
+
+    if (firstName !== undefined) {
+      queryValues.push(`%${firstName}%`);
+      whereExpressions.push(`firstName ILIKE $${queryValues.length}`);
+    }
+
+    if (lastName !== undefined) {
+      queryValues.push(`%${lastName}%`);
+      whereExpressions.push(`lastName ILIKE $${queryValues.length}`);
+    }
+
+    if (email !== undefined) {
+      queryValues.push(`%${email}%`);
+      whereExpressions.push(`email ILIKE $${queryValues.length}`);
+    }
+
+    if (department !== undefined) {
+      queryValues.push(`%${department}%`);
+      whereExpressions.push(`department ILIKE $${queryValues.length}`);
+    }
+
+    if (whereExpressions.length > 0) {
+      query += " WHERE " + whereExpressions.join(" AND ");
+    }
+
+    query += " ORDER BY lastName";
+    const empRes = await db.query(query, queryValues);
+    return empRes.rows;
+  }
+
   static async get(employee_id) {
-    const employeeRes = await db.query(
+    const empRes = await db.query(
       `SELECT employee_id, firstName, lastName, email, extension, ms_teams_link, department, office_location
            FROM employees
            WHERE employee_id = $1`,
       [employee_id]
     );
 
-    const employee = employeeRes.rows[0];
+    const employee = empRes.rows[0];
 
     if (!employee) {
       throw new NotFoundError(`No employee found with id: ${employee_id}`);
@@ -62,27 +87,16 @@ class Employee {
     return employee;
   }
 
-  /** Update employee data with `data`.
-   *
-   * This is a "partial update" --- it's fine if data doesn't contain all the
-   * fields; this only changes provided ones.
-   *
-   * Throws NotFoundError if not found.
-   */
-
+  
   static async update(employee_id, data) {
-    const { setCols, values } = sqlForPartialUpdate(data, {
-      firstName: "firstName",
-      lastName: "lastName",
-      email: "email",
-      teamsLink: "ms_teams_link",
-      department: "department",
-      officeLocation: "office_location",
-    });
+    const { setCols, values } = sqlForPartialUpdate(data, 
+      {});
+
+    const idVarIdx = "$" + (values.length + 1);
 
     const querySql = `UPDATE employees
                       SET ${setCols}
-                      WHERE employee_id = $${values.length + 1}
+                      WHERE employee_id = ${idVarIdx}
                       RETURNING employee_id,
                                 firstName,
                                 lastName,
@@ -119,16 +133,6 @@ class Employee {
     if (!employee) {
       throw new NotFoundError(`No employee with id: ${employee_id}`);
     }
-  }
-
-  /** Find all employees. */
-  static async findAll() {
-    const result = await db.query(
-      `SELECT employee_id, firstName, lastName, email, extension, ms_teams_link, department, office_location
-           FROM employees
-           ORDER BY employee_id`
-    );
-    return result.rows;
   }
 }
 

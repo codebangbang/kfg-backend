@@ -12,7 +12,7 @@ VALUES ('testuser',
         'ryfair@gmail.com',
         TRUE);
 
-INSERT INTO employees (firstName,lastName,email,extension,ms_teams_link,department, office_location)
+INSERT INTO employees (firstName, lastName, email, extension, ms_teams_link, department, office_location)
 VALUES ('Ryan','Fair','ryan.fair@korhorn.com',133,NULL,'Tax', 'Granger'),
         ('Summer','Hathaway','summer.hathaway@korhorn.com',111,NULL,'Systems & Operations','Edwardsburg'),
         ('Phil','Fletcher','phil.fletcher@korhorn.com',122,NULL,'Systems & Operations','Edwardsburg'),
