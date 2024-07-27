@@ -197,22 +197,18 @@ class User {
     if (!user) throw new NotFoundError(`No user: ${username}`);
   }
 
-  /** Apply for skill: update db, returns undefined.
-   *
-   * - username: username applying for skill
-   * - skillId: skill id
-   **/
+  
 
-  static async applyToskill(username, skillId) {
+  static async applyToSkill(username, skill_id) {
     const skillCheck = await db.query(
       `SELECT skill_id
            FROM skills
            WHERE skill_id = $1`,
-      [skillId]
+      [skill_id]
     );
     const skill = skillCheck.rows[0];
 
-    if (!skill) throw new NotFoundError(`No skill: ${skillId}`);
+    if (!skill) throw new NotFoundError(`No skill: ${skill_id}`);
 
     const userCheck = await db.query(
       `SELECT username
@@ -227,7 +223,7 @@ class User {
     await db.query(
       `INSERT INTO user_skills (username, skill_id)
            VALUES ($1, $2)`,
-      [username, skillId]
+      [username, skill_id]
     );
   }
 }

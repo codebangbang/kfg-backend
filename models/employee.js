@@ -13,15 +13,15 @@ class Employee {
       `INSERT INTO employees
            (firstName, lastName, email, extension, ms_teams_link, department, office_location)
               VALUES ($1, $2, $3, $4, $5, $6, $7)
-              RETURNING employee_id, firstName, lastName, email, extension, ms_teams_link, department, office_location`,
+              RETURNING employee_id AS employeeId, firstName, lastName, email, extension, ms_teams_link AS msTeamsLink, department, office_location AS officeLocation`,
       [
         firstName,
         lastName,
         email,
         extension,
-        ms_teams_link,
+        msTeamsLink,
         department,
-        office_location,
+        officeLocation,
       ]
     );
     const employee = result.rows[0];
@@ -30,14 +30,14 @@ class Employee {
   }
 
   static async findAll({ firstName, lastName, email, department }) {
-    let query = `SELECT employee_id,
+    let query = `SELECT employee_id as "employeeId",
                         firstName,
                         lastName,
                         email,
                         extension,
-                        ms_teams_link,
+                        ms_teams_link as "msTeamsLink",
                         department,
-                        office_location
+                        office_location as "officeLocation"
                  FROM employees`;
     let whereExpressions = [];
     let queryValues = [];
@@ -97,14 +97,14 @@ class Employee {
     const querySql = `UPDATE employees
                       SET ${setCols}
                       WHERE employee_id = ${idVarIdx}
-                      RETURNING employee_id,
+                      RETURNING employee_id as "employeeId",
                                 firstName,
                                 lastName,
                                 email,
                                 extension,
-                                ms_teams_link,
+                                ms_teams_link as "msTeamsLink",
                                 department,
-                                office_location`;
+                                office_location as "officeLocation"`;
 
     const result = await db.query(querySql, [...values, employee_id]);
     const employee = result.rows[0];
@@ -125,8 +125,8 @@ class Employee {
       `DELETE
            FROM employees
            WHERE employee_id = $1
-           RETURNING employee_id`,
-      [employee_id]
+           RETURNING employee_id as "employeeId"`,
+      [employeeId]
     );
     const employee = result.rows[0];
 

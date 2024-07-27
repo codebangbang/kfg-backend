@@ -114,19 +114,14 @@ router.delete("/:username", ensureCorrectUserOrAdmin,
   }
 );
 
-/** POST /[username]/skills/[id]  { state } => { application }
- *
- * Returns {"applied": skillId}
- *
- * Authorization required: admin or same-user-as-:username
- * */
+
 
 router.post("/:username/skills/:id", ensureCorrectUserOrAdmin,
   async function (req, res, next) {
     try {
-      const skillId = +req.params.id;
-      await User.applyToskill(req.params.username, skillId);
-      return res.json({ applied: skillId });
+      const skill_id = +req.params.id;
+      await User.applyToskill(req.params.username, skill_id);
+      return res.json({ applied: skill_id });
     } catch (err) {
       return next(err);
     }

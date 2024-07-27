@@ -8,14 +8,15 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 
 class Skill {
   static async create(data) {
+    console.debug("Creating skill with data: ", data);
     const result = await db.query(
       `INSERT INTO skills (skill_name, description)
            VALUES ($1, $2)
-           RETURNING skill_id, skill_name, description"`,
-      [data.skill_name, data.description]
+           RETURNING skill_id, skill_name, description`,
+      [data.skill_id, data.skill_name, data.description]
     );
     let skill = result.rows[0];
-
+    console.debug("created skill: ", skill);
     return skill;
   }
 
@@ -45,9 +46,7 @@ class Skill {
 
   static async get(skill_id) {
     const skillRes = await db.query(
-      `SELECT skill_id
-                  skill_name,
-                  description
+      `SELECT skill_id, skill_name, description
            FROM skills
            WHERE skill_id = $1`, [skill_id]
     );
