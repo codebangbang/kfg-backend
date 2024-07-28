@@ -7,6 +7,7 @@ const express = require("express");
 const { BadRequestError } = require("../expressError");
 const { ensureAdmin } = require("../middleware/auth");
 const Skill = require("../models/skill");
+const Employee = require("../models/employee");
 
 const skillNewSchema = require("../schemas/skillNew.json");
 const skillSearchSchema = require("../schemas/skillSearch.json");
@@ -57,6 +58,19 @@ router.get("/:id", async function (req, res, next) {
   try {
     const fetchedSkill = await Skill.get(req.params.id);
     return res.json({ skill: fetchedSkill });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+router.get("/:id/employees", async function (req, res, next) {
+  const { id } = req.params;
+  try {
+    const employees = await Employee.findBySkill(id);
+    if (!employees.length) {
+      return res.json({ message: "No employees found with this skill" });
+    }
+    return res.json({ employees });
   } catch (err) {
     return next(err);
   }

@@ -32,7 +32,7 @@ app.get("/", (req, res) => {
   res.send("Welcome to the KFG Backend API");
 });
 
-app.get('/favicon.ico', (req, res) => res.status(204).end());
+// app.get('/favicon.ico', (req, res) => res.status(204).end());
 
 /** Handle 404 errors -- this matches everything */
 app.use(function (req, res, next) {

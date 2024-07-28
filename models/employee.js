@@ -135,6 +135,26 @@ class Employee {
       throw new NotFoundError(`No employee with id: ${employee_id}`);
     }
   }
+
+  static async findBySkill(skill_id) {
+    const employeeRes = await db.query(
+      `SELECT e.employee_id,
+              e.firstName,
+              e.lastName,
+              e.email,
+              e.extension,
+              e.ms_teams_link,
+              e.department,
+              e.office_location
+           FROM employees AS e
+           JOIN employee_skills AS es
+           ON e.employee_id = es.employee_id
+           WHERE es.skill_id = $1`,
+      [skill_id]
+    );
+
+    return employeeRes.rows;
+  }
 }
 
 module.exports = Employee;

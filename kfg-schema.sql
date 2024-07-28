@@ -31,9 +31,7 @@ CREATE TABLE skills (
 );
 
 CREATE TABLE employee_skills (
-    employee_id INT,
-    skill_id INT,
+    employee_id INT REFERENCES employees(employee_id) ON DELETE CASCADE, ,
+    skill_id INT REFERENCES skills(skill_id) ON DELETE CASCADE,
     PRIMARY KEY (employee_id, skill_id),
-    FOREIGN KEY (employee_id) REFERENCES employees(employee_id) ON DELETE CASCADE,
-    FOREIGN KEY (skill_id) REFERENCES skills(skill_id) ON DELETE CASCADE
 );
