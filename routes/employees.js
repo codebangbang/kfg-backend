@@ -14,14 +14,7 @@ const employeeSearchSchema = require("../schemas/employeeSearch.json");
 
 const router = express.Router();
 
-/** POST / { employee } =>  { employee }
- *
- * employee should be { firstName, lastName, email, extension, ms_teams_link, department, office_location }
- *
- * Returns { firstName, lastName, email, extension, ms_teams_link, department, office_location }
- *
- * Authorization required: admin
- */
+
 
 router.post("/", ensureAdmin, async function (req, res, next) {
   try {
