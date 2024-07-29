@@ -57,6 +57,15 @@ router.get("/:employee_id", async function (req, res, next) {
   }
 });
 
+router.get("/:employee_id/skills", async function (req, res, next) {
+  try {
+    const skills = await Employee.getSkills(req.params.employee_id);
+    return res.json({ skills });
+  } catch (err) {
+    return next(err);
+  }
+});
+
 router.patch("/:employee_id", ensureAdmin, async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, employeeUpdateSchema);

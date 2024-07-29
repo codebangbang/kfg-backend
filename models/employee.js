@@ -85,6 +85,7 @@ class Employee {
     if (!employee) {
       throw new NotFoundError(`No employee found with id: ${employee_id}`);
     }
+    
     return employee;
   }
 
@@ -154,6 +155,18 @@ class Employee {
     );
 
     return employeeRes.rows;
+  }
+
+  static async getSkills(employee_id) {
+    const skillsRes = await db.query(
+      `SELECT s.skill_id, s.skill_name
+           FROM skills s
+           JOIN employee_skills es ON s.skill_id = es.skill_id
+           WHERE es.employee_id = $1`,
+      [employee_id]
+    );
+
+    return skillsRes.rows;
   }
 }
 
