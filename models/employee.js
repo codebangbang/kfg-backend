@@ -8,16 +8,15 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 
 class Employee {
   static async create(data) {
-
     const result = await db.query(
       `INSERT INTO employees
-           (employee_id, firstName, lastName, email, extension, ms_teams_link, department, office_location)
+           (employee_id, firstname, lastname, email, extension, ms_teams_link, department, office_location)
               VALUES ($1, $2, $3, $4, $5, $6, $7)
-              RETURNING employee_id AS employeeId, firstName, lastName, email, extension, ms_teams_link AS msTeamsLink, department, office_location AS officeLocation`,
+              RETURNING employee_id firstname, lastname, email, extension, ms_teams_link, department, office_location`,
       [
         employee_id,
-        firstName,
-        lastName,
+        firstname,
+        lastname,
         email,
         extension,
         msTeamsLink,
@@ -30,10 +29,10 @@ class Employee {
     return employee;
   }
 
-  static async findAll({ firstName, lastName, email, department }) {
+  static async findAll({ firstname, lastname, email, department }) {
     let query = `SELECT employee_id,
-                        firstName,
-                        lastName,
+                        firstname,
+                        lastname,
                         email,
                         extension,
                         ms_teams_link,
@@ -43,14 +42,14 @@ class Employee {
     let whereExpressions = [];
     let queryValues = [];
 
-    if (firstName !== undefined) {
-      queryValues.push(`%${firstName}%`);
-      whereExpressions.push(`firstName ILIKE $${queryValues.length}`);
+    if (firstname !== undefined) {
+      queryValues.push(`%${firstname}%`);
+      whereExpressions.push(`firstname ILIKE $${queryValues.length}`);
     }
 
-    if (lastName !== undefined) {
-      queryValues.push(`%${lastName}%`);
-      whereExpressions.push(`lastName ILIKE $${queryValues.length}`);
+    if (lastname !== undefined) {
+      queryValues.push(`%${lastname}%`);
+      whereExpressions.push(`lastname ILIKE $${queryValues.length}`);
     }
 
     if (email !== undefined) {
@@ -67,14 +66,14 @@ class Employee {
       query += " WHERE " + whereExpressions.join(" AND ");
     }
 
-    query += " ORDER BY lastName";
+    query += " ORDER BY lastname";
     const empRes = await db.query(query, queryValues);
     return empRes.rows;
   }
 
   static async get(employee_id) {
     const empRes = await db.query(
-      `SELECT employee_id, firstName, lastName, email, extension, ms_teams_link, department, office_location
+      `SELECT employee_id, firstname, lastname, email, extension, ms_teams_link, department, office_location
            FROM employees
            WHERE employee_id = $1`,
       [employee_id]
@@ -85,28 +84,26 @@ class Employee {
     if (!employee) {
       throw new NotFoundError(`No employee found with id: ${employee_id}`);
     }
-    
+
     return employee;
   }
 
-  
   static async update(employee_id, data) {
-    const { setCols, values } = sqlForPartialUpdate(data, 
-      {});
+    const { setCols, values } = sqlForPartialUpdate(data, {});
 
     const idVarIdx = "$" + (values.length + 1);
 
     const querySql = `UPDATE employees
                       SET ${setCols}
                       WHERE employee_id = ${idVarIdx}
-                      RETURNING employee_id AS "employeeId",
-                                firstName,
-                                lastName,
+                      RETURNING employee_id,
+                                firstname,
+                                lastname,
                                 email,
                                 extension,
-                                ms_teams_link AS "msTeamsLink",
+                                ms_teams_link,
                                 department,
-                                office_location AS "officeLocation"`;
+                                office_location`;
 
     const result = await db.query(querySql, [...values, employee_id]);
     const employee = result.rows[0];
@@ -127,7 +124,7 @@ class Employee {
       `DELETE
            FROM employees
            WHERE employee_id = $1
-           RETURNING employee_id as "employeeId"`,
+           RETURNING employee_id`,
       [employee_id]
     );
     const employee = result.rows[0];
@@ -140,8 +137,8 @@ class Employee {
   static async findBySkill(skill_id) {
     const employeeRes = await db.query(
       `SELECT e.employee_id,
-              e.firstName,
-              e.lastName,
+              e.firstname,
+              e.lastname,
               e.email,
               e.extension,
               e.ms_teams_link,

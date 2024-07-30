@@ -59,8 +59,18 @@ router.get("/:employee_id", async function (req, res, next) {
 
 router.get("/:employee_id/skills", async function (req, res, next) {
   try {
-    const skills = await Employee.getSkills(req.params.employee_id);
-    return res.json({ skills });
+    const { employee_id } = req.params;
+    if (isNaN(parseInt(employee_id, 10))) {
+      return res.status(400).json({ error: "Invalid employee_id" });
+    }
+
+    const skills = await Employee.getSkills(employee_id);
+    
+    if(!skills || skills.length === 0) {
+      return res.status(404).json({ error: "No skills found for employee" });
+    }
+
+    return res.json({ employee_id, skills });
   } catch (err) {
     return next(err);
   }

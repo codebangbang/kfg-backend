@@ -10,6 +10,8 @@ const authRoutes = require("./routes/auth");
 const employeesRoutes = require("./routes/employees");
 const usersRoutes = require("./routes/users");
 const skillsRoutes = require("./routes/skills");
+const departmentRoutes = require("./routes/departments");
+const officeLocationRoutes = require("./routes/officeLocations");
 
 const app = express();
 
@@ -27,6 +29,8 @@ app.use("/auth", authRoutes);
 app.use("/employees", employeesRoutes);
 app.use("/users", usersRoutes);
 app.use("/skills", skillsRoutes);
+app.use("/departments", departmentRoutes);
+app.use("/officeLocations", officeLocationRoutes);
 
 app.get("/", (req, res) => {
   res.send("Welcome to the KFG Backend API");

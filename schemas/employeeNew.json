@@ -3,39 +3,54 @@
   "$id": "http://our.employee.com/employeeNew.schema.json",
   "type": "object",
   "properties": {
-    "firstName": {
+    "employee_id": { 
       "type": "string",
       "minLength": 1,
       "maxLength": 50
     },
-    "lastName": {
+    "firstname": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 50
+    },
+    "lastname": {
       "type": "string",
       "minLength": 1,
       "maxLength": 50
     },
     "email": {
-      "type": "string"
+      "type": "string",
+      "format": "email"
     },
     "extension": {
       "type": "integer",
-      "minimum": 0,
-      "minLength": 1,
-      "maxLength": 4
+      "minimum": 1,
+      "maximum": 9999
     },
     "ms_teams_link": {
       "type": "string",
-      "format": "uri"
+      "format": "email"
     },
     "department": {
       "type": "string",
       "minLength": 1,
       "maxLength": 50
+    },
+    "office_location": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 50
     }
+
   },
   "additionalProperties": false,
   "required": [
-    "firstName",
-    "lastName",
-    "email"
+    "firstname",
+    "lastname",
+    "email",
+    "extension",
+    "ms_teams_link",
+    "department",
+    "office_location"
   ]
 }

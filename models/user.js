@@ -16,7 +16,7 @@ const { BCRYPT_WORK_FACTOR } = require("../config.js");
 class User {
   /** authenticate user with username, password.
    *
-   * Returns { username, firstName, lastName, email, is_admin }
+   * Returns { username, firstname, lastname, email, is_admin }
    *
    * Throws UnauthorizedError is user not found or wrong password.
    **/
@@ -26,10 +26,10 @@ class User {
     const result = await db.query(
       `SELECT username,
                   password,
-                  firstName,
-                  lastName,
+                  firstname,
+                  lastname,
                   email,
-                  is_admin AS "isAdmin"
+                  is_admin
            FROM users
            WHERE username = $1`,
       [username]
@@ -51,7 +51,7 @@ class User {
 
   /** Register user with data.
    *
-   * Returns { username, firstName, lastName, email, isAdmin }
+   * Returns { username, firstname, lastname, email, isAdmin }
    *
    * Throws BadRequestError on duplicates.
    **/
@@ -59,8 +59,8 @@ class User {
   static async register({
     username,
     password,
-    firstName,
-    lastName,
+    firstname,
+    lastname,
     email,
     isAdmin,
   }) {
@@ -81,13 +81,13 @@ class User {
       `INSERT INTO users
            (username,
             password,
-            firstName,
-            lastName,
+            firstname,
+            lastname,
             email,
             is_admin)
            VALUES ($1, $2, $3, $4, $5, $6)
-           RETURNING username, firstName, lastName, email, is_admin AS "isAdmin"`,
-      [username, hashedPassword, firstName, lastName, email, isAdmin]
+           RETURNING username, firstname, lastname, email, is_admin`,
+      [username, hashedPassword, firstname, lastname, email, isAdmin]
     );
 
     const user = result.rows[0];
@@ -97,16 +97,16 @@ class User {
 
   /** Find all users.
    *
-   * Returns [{ username, firstName, lastName, email, is_admin }, ...]
+   * Returns [{ username, firstname, lastname, email, is_admin }, ...]
    **/
 
   static async findAll() {
     const result = await db.query(
       `SELECT username,
-                  firstName,
-                  lastName,
+                  firstname,
+                  lastname,
                   email,
-                  is_admin AS "isAdmin"
+                  is_admin
            FROM users
            ORDER BY username`
     );
@@ -120,10 +120,10 @@ class User {
   static async get(username) {
     const userRes = await db.query(
       `SELECT username,
-                  firstName,
-                  lastName,
+                  firstname,
+                  lastname,
                   email,
-                  is_admin AS "isAdmin"
+                  is_admin
            FROM users
            WHERE username = $1`,
       [username]
@@ -142,9 +142,9 @@ class User {
    * all the fields; this only changes provided ones.
    *
    * Data can include:
-   *   { firstName, lastName, password, email, isAdmin }
+   *   { firstname, lastname, password, email, isAdmin }
    *
-   * Returns { username, firstName, lastName, email, isAdmin }
+   * Returns { username, firstname, lastname, email, isAdmin }
    *
    * Throws NotFoundError if not found.
    *
@@ -159,8 +159,8 @@ class User {
     }
 
     const { setCols, values } = sqlForPartialUpdate(data, {
-      firstName: "firstName",
-      lastName: "lastName",
+      firstname: "firstname",
+      lastname: "lastname",
       isAdmin: "is_admin",
     });
     const usernameVarIdx = "$" + (values.length + 1);
@@ -169,10 +169,10 @@ class User {
                       SET ${setCols} 
                       WHERE username = ${usernameVarIdx} 
                       RETURNING username,
-                                firstName,
-                                lastName,
+                                firstname,
+                                lastname,
                                 email,
-                                is_admin AS "isAdmin"`;
+                                is_admin`;
     const result = await db.query(querySql, [...values, username]);
     const user = result.rows[0];
 
@@ -196,8 +196,6 @@ class User {
 
     if (!user) throw new NotFoundError(`No user: ${username}`);
   }
-
-  
 
   static async applyToSkill(username, skill_id) {
     const skillCheck = await db.query(

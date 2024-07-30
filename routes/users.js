@@ -20,7 +20,7 @@ const router = express.Router();
  * admin.
  *
  * This returns the newly created user and an authentication token for them:
- *  {user: { username, firstName, lastName, email, isAdmin }, token }
+ *  {user: { username, firstname, lastname, email, isAdmin }, token }
  *
  * Authorization required: admin
  **/
@@ -41,7 +41,7 @@ router.post("/", ensureAdmin, async function (req, res, next) {
   }
 });
 
-/** GET / => { users: [ {username, firstName, lastName, email }, ... ] }
+/** GET / => { users: [ {username, firstname, lastname, email }, ... ] }
  *
  * Returns list of all users.
  *
@@ -61,7 +61,9 @@ router.get("/", ensureAdmin, async function (req, res, next) {
  *
  **/
 
-router.get("/:username", ensureCorrectUserOrAdmin,
+router.get(
+  "/:username",
+  ensureCorrectUserOrAdmin,
   async function (req, res, next) {
     try {
       const user = await User.get(req.params.username);
@@ -75,14 +77,16 @@ router.get("/:username", ensureCorrectUserOrAdmin,
 /** PATCH /[username] { user } => { user }
  *
  * Data can include:
- *   { firstName, lastName, password, email }
+ *   { firstname, lastname, password, email }
  *
- * Returns { username, firstName, lastName, email, isAdmin }
+ * Returns { username, firstname, lastname, email, isAdmin }
  *
  * Authorization required: admin or same-user-as-:username
  **/
 
-router.patch("/:username", ensureCorrectUserOrAdmin,
+router.patch(
+  "/:username",
+  ensureCorrectUserOrAdmin,
   async function (req, res, next) {
     try {
       const validator = jsonschema.validate(req.body, userUpdateSchema);
@@ -103,7 +107,9 @@ router.patch("/:username", ensureCorrectUserOrAdmin,
  * Authorization required: admin or same-user-as-:username
  **/
 
-router.delete("/:username", ensureCorrectUserOrAdmin,
+router.delete(
+  "/:username",
+  ensureCorrectUserOrAdmin,
   async function (req, res, next) {
     try {
       await User.remove(req.params.username);
@@ -114,9 +120,9 @@ router.delete("/:username", ensureCorrectUserOrAdmin,
   }
 );
 
-
-
-router.post("/:username/skills/:id", ensureCorrectUserOrAdmin,
+router.post(
+  "/:username/skills/:id",
+  ensureCorrectUserOrAdmin,
   async function (req, res, next) {
     try {
       const skill_id = +req.params.id;
