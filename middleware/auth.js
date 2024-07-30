@@ -10,11 +10,14 @@ const authenticateJWT = (req, res, next) => {
     const authHeader = req.headers && req.headers.authorization;
     if (authHeader) {
       const token = authHeader.replace(/^[Bb]earer /, "").trim();
+      console.log("Token Received: ", token);
       res.locals.user = jwt.verify(token, SECRET_KEY);
+      console.log("User decoded from token: ", res.locals.user);
     }
     return next();
   } catch (err) {
-    return next();
+    console.log("Error in authenticateJWT: ", err);
+    return next(err);
   }
 }
 
@@ -30,11 +33,13 @@ function ensureLoggedIn(req, res, next) {
 
 function ensureAdmin(req, res, next) {
   try {
+    console.log("User in ensureAdmin:", res.locals.user);
     if (!res.locals.user || !res.locals.user.isAdmin) {
       throw new UnauthorizedError();
     }
     return next();
   } catch (err) {
+    console.error("Error in ensureAdmin: ", err);
     return next(err);
   }
 }

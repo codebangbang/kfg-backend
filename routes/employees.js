@@ -5,7 +5,7 @@
 const jsonschema = require("jsonschema");
 const express = require("express");
 const { BadRequestError } = require("../expressError");
-const { ensureAdmin } = require("../middleware/auth");
+const { ensureAdmin, ensureLoggedIn } = require("../middleware/auth");
 const Employee = require("../models/employee");
 
 const employeeNewSchema = require("../schemas/employeeNew.json");
@@ -16,7 +16,7 @@ const router = express.Router();
 
 
 
-router.post("/", ensureAdmin, async function (req, res, next) {
+router.post("/", ensureLoggedIn, ensureAdmin, async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, employeeNewSchema);
     if (!validator.valid) {
