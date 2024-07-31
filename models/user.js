@@ -16,7 +16,7 @@ const { BCRYPT_WORK_FACTOR } = require("../config.js");
 class User {
   /** authenticate user with username, password.
    *
-   * Returns { username, firstname, lastname, email, is_admin }
+   * Returns { username, firstname, lastname, email, isAdmin }
    *
    * Throws UnauthorizedError is user not found or wrong password.
    **/
@@ -29,7 +29,7 @@ class User {
                   firstname,
                   lastname,
                   email,
-                  is_admin
+                  isAdmin
            FROM users
            WHERE username = $1`,
       [username]
@@ -84,9 +84,9 @@ class User {
             firstname,
             lastname,
             email,
-            is_admin)
+            isAdmin)
            VALUES ($1, $2, $3, $4, $5, $6)
-           RETURNING username, firstname, lastname, email, is_admin`,
+           RETURNING username, firstname, lastname, email, isAdmin`,
       [username, hashedPassword, firstname, lastname, email, isAdmin]
     );
 
@@ -97,7 +97,7 @@ class User {
 
   /** Find all users.
    *
-   * Returns [{ username, firstname, lastname, email, is_admin }, ...]
+   * Returns [{ username, firstname, lastname, email, isAdmin }, ...]
    **/
 
   static async findAll() {
@@ -106,7 +106,7 @@ class User {
                   firstname,
                   lastname,
                   email,
-                  is_admin
+                  isAdmin
            FROM users
            ORDER BY username`
     );
@@ -123,7 +123,7 @@ class User {
                   firstname,
                   lastname,
                   email,
-                  is_admin
+                  isAdmin
            FROM users
            WHERE username = $1`,
       [username]
@@ -161,7 +161,7 @@ class User {
     const { setCols, values } = sqlForPartialUpdate(data, {
       firstname: "firstname",
       lastname: "lastname",
-      isAdmin: "is_admin",
+      isAdmin: "isAdmin",
     });
     const usernameVarIdx = "$" + (values.length + 1);
 
@@ -172,7 +172,7 @@ class User {
                                 firstname,
                                 lastname,
                                 email,
-                                is_admin`;
+                                isAdmin`;
     const result = await db.query(querySql, [...values, username]);
     const user = result.rows[0];
 

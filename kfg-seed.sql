@@ -1,4 +1,4 @@
-INSERT INTO users (username, "password", firstname, lastname, email, is_admin)
+INSERT INTO users (username, "password", firstname, lastname, email, isAdmin)
 VALUES ('testuser',
         '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q',
         'Test',
@@ -10,7 +10,14 @@ VALUES ('testuser',
         'Test',
         'Admin!',
         'ryfair@gmail.com',
+        TRUE),
+        ('joemama',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvZW1hbWEiLCJpc0FkbWluIjp0cnVlLCJpYXQiOjE3MjI0NjU1NTl9.vvOhMynTaLB3tUJlFnBr0bWvEHVYq0tCwc_Ybo89T5Q',
+        'Joe',
+        'Mama',
+        'joemama@gmail.com',
         TRUE);
+        
 
 INSERT INTO employees (firstname, lastname, email, extension, ms_teams_link, department, office_location)
 VALUES ('Ryan','Fair','ryan.fair@korhorn.com',133,'ryan.fair@korhorn.com','Tax', 'Granger'),
