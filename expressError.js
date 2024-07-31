@@ -22,10 +22,9 @@ class NotFoundError extends ExpressError {
 
 /** 401 UNAUTHORIZED error. */
 
-class UnauthorizedError extends Error {
+class UnauthorizedError extends ExpressError {
   constructor(message = "Unauthorized") {
-    super(message)
-    this.status= 401;
+    super(message, 401);
   }
 }
 

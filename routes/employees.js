@@ -5,7 +5,7 @@
 const jsonschema = require("jsonschema");
 const express = require("express");
 const { BadRequestError } = require("../expressError");
-const { ensureAdmin, ensureLoggedIn } = require("../middleware/auth");
+const { ensureAdmin } = require("../middleware/auth");
 const Employee = require("../models/employee");
 
 const employeeNewSchema = require("../schemas/employeeNew.json");
@@ -14,9 +14,7 @@ const employeeSearchSchema = require("../schemas/employeeSearch.json");
 
 const router = express.Router();
 
-
-
-router.post("/", ensureLoggedIn, ensureAdmin, async function (req, res, next) {
+router.post("/", ensureAdmin, async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, employeeNewSchema);
     if (!validator.valid) {
@@ -65,8 +63,8 @@ router.get("/:employee_id/skills", async function (req, res, next) {
     }
 
     const skills = await Employee.getSkills(employee_id);
-    
-    if(!skills || skills.length === 0) {
+
+    if (!skills || skills.length === 0) {
       return res.status(404).json({ error: "No skills found for employee" });
     }
 

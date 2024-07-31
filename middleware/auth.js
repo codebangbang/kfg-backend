@@ -1,6 +1,5 @@
 "use strict";
 
-
 const jwt = require("jsonwebtoken");
 const { SECRET_KEY } = require("../config");
 const { UnauthorizedError } = require("../expressError");
@@ -10,16 +9,15 @@ const authenticateJWT = (req, res, next) => {
     const authHeader = req.headers && req.headers.authorization;
     if (authHeader) {
       const token = authHeader.replace(/^[Bb]earer /, "").trim();
-      console.log("Token Received: ", token);
+      // console.log("Token Received: ", token);
       res.locals.user = jwt.verify(token, SECRET_KEY);
-      console.log("User decoded from token: ", res.locals.user);
+      // console.log("User decoded from token: ", res.locals.user);
     }
     return next();
   } catch (err) {
-    console.log("Error in authenticateJWT: ", err);
-    return next(err);
+    return next();
   }
-}
+};
 
 function ensureLoggedIn(req, res, next) {
   try {
@@ -29,7 +27,6 @@ function ensureLoggedIn(req, res, next) {
     return next(err);
   }
 }
-
 
 function ensureAdmin(req, res, next) {
   try {
@@ -43,7 +40,6 @@ function ensureAdmin(req, res, next) {
     return next(err);
   }
 }
-
 
 function ensureCorrectUserOrAdmin(req, res, next) {
   try {
