@@ -14,19 +14,25 @@
       "maxLength": 50
     },
     "email": {
-      "type": "string"
+      "type": "string",
+      "format": "email"
     },
     "extension": {
-      "type": "integer",
+      "type": "string",
       "minimum": 0,
       "minLength": 1,
       "maxLength": 4
     },
     "ms_teams_link": {
       "type": "string",
-      "format": "uri"
+      "format": "email"
     },
     "department": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 50
+    },
+    "office_location": {
       "type": "string",
       "minLength": 1,
       "maxLength": 50
