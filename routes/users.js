@@ -20,7 +20,7 @@ const router = express.Router();
  * admin.
  *
  * This returns the newly created user and an authentication token for them:
- *  {user: { username, firstname, lastname, email, isAdmin }, token }
+ *  {user: { username, firstname, lastname, email, isadmin }, token }
  *
  * Authorization required: admin
  **/
@@ -79,7 +79,7 @@ router.get(
  * Data can include:
  *   { firstname, lastname, password, email }
  *
- * Returns { username, firstname, lastname, email, isAdmin }
+ * Returns { username, firstname, lastname, email, isadmin }
  *
  * Authorization required: admin or same-user-as-:username
  **/

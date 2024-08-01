@@ -13,7 +13,7 @@ class Skill {
       `INSERT INTO skills (skill_name, description)
            VALUES ($1, $2)
            RETURNING skill_id, skill_name, description`,
-      [data.skill_id, data.skill_name, data.description]
+      [data.skill_name, data.description]
     );
     let skill = result.rows[0];
     console.debug("created skill: ", skill);
@@ -48,7 +48,8 @@ class Skill {
     const skillRes = await db.query(
       `SELECT skill_id, skill_name, description
            FROM skills
-           WHERE skill_id = $1`, [skill_id]
+           WHERE skill_id = $1`,
+      [skill_id]
     );
 
     const skill = skillRes.rows[0];
@@ -63,9 +64,8 @@ class Skill {
    */
 
   static async update(skill_id, data) {
-    const { setCols, values } = sqlForPartialUpdate(data, 
-      {});
-    
+    const { setCols, values } = sqlForPartialUpdate(data, {});
+
     const idVarIdx = "$" + (values.length + 1);
 
     const querySql = `UPDATE skills 

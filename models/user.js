@@ -16,7 +16,7 @@ const { BCRYPT_WORK_FACTOR } = require("../config.js");
 class User {
   /** authenticate user with username, password.
    *
-   * Returns { username, firstname, lastname, email, isAdmin }
+   * Returns { username, firstname, lastname, email, isadmin }
    *
    * Throws UnauthorizedError is user not found or wrong password.
    **/
@@ -29,7 +29,7 @@ class User {
                   firstname,
                   lastname,
                   email,
-                  isAdmin
+                  isadmin
            FROM users
            WHERE username = $1`,
       [username]
@@ -51,7 +51,7 @@ class User {
 
   /** Register user with data.
    *
-   * Returns { username, firstname, lastname, email, isAdmin }
+   * Returns { username, firstname, lastname, email, isadmin }
    *
    * Throws BadRequestError on duplicates.
    **/
@@ -62,7 +62,7 @@ class User {
     firstname,
     lastname,
     email,
-    isAdmin,
+    isadmin,
   }) {
     const duplicateCheck = await db.query(
       `SELECT username
@@ -84,10 +84,10 @@ class User {
             firstname,
             lastname,
             email,
-            isAdmin)
+            isadmin)
            VALUES ($1, $2, $3, $4, $5, $6)
-           RETURNING username, firstname, lastname, email, isAdmin`,
-      [username, hashedPassword, firstname, lastname, email, isAdmin]
+           RETURNING username, firstname, lastname, email, isadmin`,
+      [username, hashedPassword, firstname, lastname, email, isadmin]
     );
 
     const user = result.rows[0];
@@ -97,7 +97,7 @@ class User {
 
   /** Find all users.
    *
-   * Returns [{ username, firstname, lastname, email, isAdmin }, ...]
+   * Returns [{ username, firstname, lastname, email, isadmin }, ...]
    **/
 
   static async findAll() {
@@ -106,7 +106,7 @@ class User {
                   firstname,
                   lastname,
                   email,
-                  isAdmin
+                  isadmin
            FROM users
            ORDER BY username`
     );
@@ -123,7 +123,7 @@ class User {
                   firstname,
                   lastname,
                   email,
-                  isAdmin
+                  isadmin
            FROM users
            WHERE username = $1`,
       [username]
@@ -142,9 +142,9 @@ class User {
    * all the fields; this only changes provided ones.
    *
    * Data can include:
-   *   { firstname, lastname, password, email, isAdmin }
+   *   { firstname, lastname, password, email, isadmin }
    *
-   * Returns { username, firstname, lastname, email, isAdmin }
+   * Returns { username, firstname, lastname, email, isadmin }
    *
    * Throws NotFoundError if not found.
    *
@@ -161,7 +161,7 @@ class User {
     const { setCols, values } = sqlForPartialUpdate(data, {
       firstname: "firstname",
       lastname: "lastname",
-      isAdmin: "isAdmin",
+      isadmin: "isadmin",
     });
     const usernameVarIdx = "$" + (values.length + 1);
 
@@ -172,7 +172,7 @@ class User {
                                 firstname,
                                 lastname,
                                 email,
-                                isAdmin`;
+                                isadmin`;
     const result = await db.query(querySql, [...values, username]);
     const user = result.rows[0];
 

@@ -1,4 +1,4 @@
-INSERT INTO users (username, "password", firstname, lastname, email, isAdmin)
+INSERT INTO users (username, "password", firstname, lastname, email, isadmin)
 VALUES ('testuser',
         '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q',
         'Test',
@@ -12,7 +12,7 @@ VALUES ('testuser',
         'ryfair@gmail.com',
         TRUE),
         ('joemama',
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvZW1hbWEiLCJpc0FkbWluIjp0cnVlLCJpYXQiOjE3MjI0NjU1NTl9.vvOhMynTaLB3tUJlFnBr0bWvEHVYq0tCwc_Ybo89T5Q',
+        '$2a$12$hrx2V2TGMnyjmIyRvJKrSeN6Jd2q1ouKeKBE53FMU2bCYGoth82r.',
         'Joe',
         'Mama',
         'joemama@gmail.com',
