@@ -19,9 +19,9 @@ class Employee {
         lastname,
         email,
         extension,
-        msTeamsLink,
+        ms_teams_link,
         department,
-        officeLocation,
+        office_location,
       ]
     );
     const employee = result.rows[0];

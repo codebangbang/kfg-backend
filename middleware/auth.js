@@ -7,12 +7,12 @@ const { UnauthorizedError } = require("../expressError");
 const authenticateJWT = (req, res, next) => {
   try {
     const authHeader = req.headers && req.headers.authorization;
-    console.log("Authorization Header: ", authHeader);
+    // console.log("Authorization Header: ", authHeader);
     if (authHeader) {
       const token = authHeader.replace(/^[Bb]earer /, "").trim();
-      console.log("Token Received: ", token);
+      // console.log("Token Received: ", token);
       res.locals.user = jwt.verify(token, SECRET_KEY);
-      console.log("User decoded from token: ", res.locals.user);
+      // console.log("User decoded from token: ", res.locals.user);
     }
     return next();
   } catch (err) {
