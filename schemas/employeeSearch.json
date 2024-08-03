@@ -3,33 +3,10 @@
   "$id": "http://our.employee.com/employeeSearch.schema.json",
   "type": "object",
   "properties": {
-    "firstname": {
+    "search": {
       "type": "string",
       "minLength": 1,
-      "maxLength": 50
-    },
-    "lastname": {
-      "type": "string",
-      "minLength": 1,
-      "maxLength": 50
-    },
-    "email": {
-      "type": "string"
-    },
-    "extension": {
-      "type": "integer",
-      "minimum": 0,
-      "minLength": 1,
-      "maxLength": 4
-    },
-    "ms_teams_link": {
-      "type": "string",
-      "format": "uri"
-    },
-    "department": {
-      "type": "string",
-      "minLength": 1,
-      "maxLength": 50
+      "maxLength": 100
     }
   },
   "additionalProperties": false,

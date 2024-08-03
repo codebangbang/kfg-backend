@@ -32,6 +32,7 @@ router.post("/", ensureAdmin, async function (req, res, next) {
 // /** GET /  =>
 
 router.get("/", async function (req, res, next) {
+  console.debug("Received query parameters:", req.query);
   try {
     const q = req.query;
     const validator = jsonschema.validate(q, employeeSearchSchema);

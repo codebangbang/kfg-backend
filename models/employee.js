@@ -29,46 +29,19 @@ class Employee {
     return employee;
   }
 
-  static async findAll({ firstname, lastname, email, department }) {
-    let query = `SELECT employee_id,
-                        firstname,
-                        lastname,
-                        email,
-                        extension,
-                        ms_teams_link,
-                        department,
-                        office_location
-                 FROM employees`;
-    let whereExpressions = [];
-    let queryValues = [];
-
-    if (firstname !== undefined) {
-      queryValues.push(`%${firstname}%`);
-      whereExpressions.push(`firstname ILIKE $${queryValues.length}`);
-    }
-
-    if (lastname !== undefined) {
-      queryValues.push(`%${lastname}%`);
-      whereExpressions.push(`lastname ILIKE $${queryValues.length}`);
-    }
-
-    if (email !== undefined) {
-      queryValues.push(`%${email}%`);
-      whereExpressions.push(`email ILIKE $${queryValues.length}`);
-    }
-
-    if (department !== undefined) {
-      queryValues.push(`%${department}%`);
-      whereExpressions.push(`department ILIKE $${queryValues.length}`);
-    }
-
-    if (whereExpressions.length > 0) {
-      query += " WHERE " + whereExpressions.join(" AND ");
-    }
-
-    query += " ORDER BY lastname";
-    const empRes = await db.query(query, queryValues);
-    return empRes.rows;
+  static async findAll(query) {
+    const search = query.search || '';
+    const employees = await db.query(
+      `SELECT * FROM employees 
+      WHERE firstname ILIKE $1 
+      OR lastname ILIKE $1 
+      OR email ILIKE $1 
+      OR department ILIKE $1 
+      OR extension ILIKE $1
+      OR office_location ILIKE $1`,
+    [`%${search}%`]
+    );
+    return employees.rows;
   }
 
   static async get(employee_id) {
