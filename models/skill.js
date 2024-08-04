@@ -1,5 +1,7 @@
 "use strict";
 
+// This is my model for the Skill table in the database. It includes the following methods for skill information: create, findAll, get, update, remove.
+
 const db = require("../db");
 const { NotFoundError } = require("../expressError");
 const { sqlForPartialUpdate } = require("../helpers/sql");

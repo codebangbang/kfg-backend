@@ -1,5 +1,7 @@
 "use strict";
 
+// This is my middleware function to authenticate a user using a JWT token.
+
 const jwt = require("jsonwebtoken");
 const { SECRET_KEY } = require("../config");
 const { UnauthorizedError } = require("../expressError");

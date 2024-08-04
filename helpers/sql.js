@@ -1,5 +1,6 @@
 const { BadRequestError } = require("../expressError");
 
+//  This is my helper function to convert the data to be updated into a SQL string
 
 function sqlForPartialUpdate(dataToUpdate, jsToSql) {
   const keys = Object.keys(dataToUpdate);

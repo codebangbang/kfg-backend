@@ -1,6 +1,6 @@
 "use strict";
 
-/** Routes for employees. */
+// This is my employees.js file in the routes folder. It includes the following routes: /, /:employee_id, /:employee_id/skills.
 
 const jsonschema = require("jsonschema");
 const express = require("express");

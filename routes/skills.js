@@ -1,6 +1,6 @@
 "use strict";
 
-/** Routes for skills. */
+// This is my skills.js file in the routes folder. It includes the following routes: /, /:id, /:id/employees.
 
 const jsonschema = require("jsonschema");
 const express = require("express");
@@ -15,12 +15,6 @@ const skillSearchSchema = require("../schemas/skillSearch.json");
 
 const router = express.Router({ mergeParams: true });
 
-/** POST / { skill } => { skill }
- *
- * skill should be { skill_name, description }
- *
- *
- */
 
 router.post("/", ensureAdmin, async function (req, res, next) {
   try {

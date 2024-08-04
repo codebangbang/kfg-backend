@@ -1,6 +1,6 @@
 "use strict";
 
-/** Routes for users. */
+// This is my users.js file in the routes folder. It includes the following routes: /, /:username, /:username/skills/:id.
 
 const jsonschema = require("jsonschema");
 const express = require("express");
@@ -13,17 +13,6 @@ const userUpdateSchema = require("../schemas/userUpdate.json");
 
 const router = express.Router();
 
-/** POST / { user }  => { user, token }
- *
- * Adds a new user. This is not the registration endpoint --- instead, this is
- * only for admin users to add new users. The new user being added can be an
- * admin.
- *
- * This returns the newly created user and an authentication token for them:
- *  {user: { username, firstname, lastname, email, isadmin }, token }
- *
- * Authorization required: admin
- **/
 
 router.post("/", ensureAdmin, async function (req, res, next) {
   try {
@@ -41,12 +30,6 @@ router.post("/", ensureAdmin, async function (req, res, next) {
   }
 });
 
-/** GET / => { users: [ {username, firstname, lastname, email }, ... ] }
- *
- * Returns list of all users.
- *
- * Authorization required: admin
- **/
 
 router.get("/", ensureAdmin, async function (req, res, next) {
   try {
@@ -57,9 +40,7 @@ router.get("/", ensureAdmin, async function (req, res, next) {
   }
 });
 
-/** GET /[username] => { user }
- *
- **/
+
 
 router.get(
   "/:username",
@@ -74,15 +55,6 @@ router.get(
   }
 );
 
-/** PATCH /[username] { user } => { user }
- *
- * Data can include:
- *   { firstname, lastname, password, email }
- *
- * Returns { username, firstname, lastname, email, isadmin }
- *
- * Authorization required: admin or same-user-as-:username
- **/
 
 router.patch(
   "/:username",
@@ -102,10 +74,6 @@ router.patch(
   }
 );
 
-/** DELETE /[username]  =>  { deleted: username }
- *
- * Authorization required: admin or same-user-as-:username
- **/
 
 router.delete(
   "/:username",

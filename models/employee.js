@@ -1,5 +1,7 @@
 "use strict";
 
+// This is my model for the Employee table in the database. It includes the following methods for employee information: create, findAll, get, update, remove, findBySkill, getSkills. 
+
 const db = require("../db");
 const { BadRequestError, NotFoundError } = require("../expressError");
 const { sqlForPartialUpdate } = require("../helpers/sql");
