@@ -65,12 +65,9 @@ router.get("/:employee_id/skills", async function (req, res, next) {
 
     const skills = await Employee.getSkills(employee_id);
 
-    if (!skills || skills.length === 0) {
-      return res.status(404).json({ error: "No skills found for employee" });
-    }
-
     return res.json({ employee_id, skills });
-  } catch (err) {
+
+    } catch (err) {
     return next(err);
   }
 });

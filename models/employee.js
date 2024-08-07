@@ -1,6 +1,6 @@
 "use strict";
 
-// This is my model for the Employee table in the database. It includes the following methods for employee information: create, findAll, get, update, remove, findBySkill, getSkills. 
+// This is my model for the Employee table in the database. It includes the following methods for employee information: create, findAll, get, update, remove, findBySkill, getSkills.
 
 const db = require("../db");
 const { BadRequestError, NotFoundError } = require("../expressError");
@@ -12,18 +12,17 @@ class Employee {
   static async create(data) {
     const result = await db.query(
       `INSERT INTO employees
-           (employee_id, firstname, lastname, email, extension, ms_teams_link, department, office_location)
+           (firstname, lastname, email, extension, ms_teams_link, department, office_location)
               VALUES ($1, $2, $3, $4, $5, $6, $7)
               RETURNING employee_id firstname, lastname, email, extension, ms_teams_link, department, office_location`,
       [
-        employee_id,
-        firstname,
-        lastname,
-        email,
-        extension,
-        ms_teams_link,
-        department,
-        office_location,
+        data.firstname,
+        data.lastname,
+        data.email,
+        data.extension,
+        data.ms_teams_link,
+        data.department,
+        data.office_location,
       ]
     );
     const employee = result.rows[0];
@@ -32,7 +31,7 @@ class Employee {
   }
 
   static async findAll(query) {
-    const search = query.search || '';
+    const search = query.search || "";
     const employees = await db.query(
       `SELECT * FROM employees 
       WHERE firstname ILIKE $1 
@@ -41,7 +40,7 @@ class Employee {
       OR department ILIKE $1 
       OR extension ILIKE $1
       OR office_location ILIKE $1`,
-    [`%${search}%`]
+      [`%${search}%`]
     );
     return employees.rows;
   }
