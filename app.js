@@ -18,7 +18,7 @@ const officeLocationRoutes = require("./routes/officeLocations");
 const app = express();
 
 const corsOptions = {
-  origin: "http://localhost:5173",
+  origin: ["http://localhost:5173", "https://kfg-help.onrender.com"],
   optionsSuccessStatus: 200,
 };
 
