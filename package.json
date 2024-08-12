@@ -9,7 +9,7 @@
     "test": "jest -i"
   },
   "engines": {
-  "node": ">=18.20.3 <19.0.0"
+    "node": ">=18.20.3 <19.0.0"
   },
   "jest": {
     "testPathIgnorePatterns": [
